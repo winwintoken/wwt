@@ -67,7 +67,7 @@ var pools = [
 	],
 	[
 		'0x923687DdD21B22AcA8cd6f227FcdE603737FfbE5',
-		'BURGER/ETH',
+		'WWT/ETH',
 		'https://uniswap.info/pair/0x923687DdD21B22AcA8cd6f227FcdE603737FfbE5',
 		4,
 		0,
@@ -1600,7 +1600,7 @@ function getBalance(address) {
 		contract.methods.decimals().call(function (error, d) {
 			result = result / Math.pow(10, d);
 			//console.log(error, result);
-			$('.balance').text(result.toFixedSpecial(2) + ' BURGER');
+			$('.balance').text(result.toFixedSpecial(2) + ' WWT');
 			balance = result;
 		});
 	});

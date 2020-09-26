@@ -1,1 +1,632 @@
-WinWin Token2
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>BURGER MONEY</title>
+	<link rel="canonical" href="https://burger.money">
+	<link rel="shortcut icon" href="images/burger-icon.png">
+	<meta name="theme-color" content="#433030">
+	<link rel="preconnect" href="https://mainnet.eth.aragon.network" crossorigin>
+	<link rel="preconnect" href="https://fonts.googleapis.com/" crossorigin>
+	<link rel="preconnect" href="https://cdnjs.cloudflare.com/" crossorigin>
+	<link rel=" preconnect" href="https://stackpath.bootstrapcdn.com/" crossorigin>
+	<link rel=" preconnect" href="https://cdn.jsdelivr.net/npm/" crossorigin>
+	<link rel=" preconnect" href="https://raw.githubusercontent.com" crossorigin>
+	<link rel=" preconnect" href="https://unpkg.com" crossorigin>
+
+	<link rel="icon" href="images/favicon.png">
+
+	<link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans&display=swap" rel="stylesheet">
+	<meta name="viewport" content="width=500, initial-scale=1">
+
+	<link rel='stylesheet' href='styles/styles.css' />
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+		integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+		integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+		crossorigin="anonymous"></script>
+	<script src="https://raw.githubusercontent.com/talmand/jquery-animate-numbers/master/jquery.animateNumbers.min.js"
+		type="javascript"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+		integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+		crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+		integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+		crossorigin="anonymous"></script>
+	<script src="https://unpkg.com/web3@latest/dist/web3.min.js"></script>
+
+	<script>
+		(function ($) {
+			$.fn.animateNumbers = function (stop, commas, duration, ease) {
+				return this.each(function () {
+					var $this = $(this);
+					var isInput = $this.is('input');
+					var start = parseInt(isInput ? $this.val().replace(/,/g, "") : $this.text().replace(/,/g, ""));
+					var regex = /(\d)(?=(\d\d\d)+(?!\d))/g;
+					commas = commas === undefined ? true : commas;
+
+					// number inputs can't have commas or it blanks out
+					if (isInput && $this[0].type === 'number') {
+						commas = false;
+					}
+
+					$({ value: start }).animate({ value: stop }, {
+						duration: duration === undefined ? 1000 : duration,
+						easing: ease === undefined ? "swing" : ease,
+						step: function () {
+							isInput ? $this.val(Math.floor(this.value)) : $this.text(Math.floor(this.value));
+							if (commas) {
+								isInput ? $this.val($this.val().replace(regex, "$1,")) : $this.text($this.text().replace(regex, "$1,"));
+							}
+						},
+						complete: function () {
+							if (parseInt($this.text()) !== stop || parseInt($this.val()) !== stop) {
+								isInput ? $this.val(stop) : $this.text(stop);
+								if (commas) {
+									isInput ? $this.val($this.val().replace(regex, "$1,")) : $this.text($this.text().replace(regex, "$1,"));
+								}
+							}
+						}
+					});
+				});
+			};
+		})(jQuery);
+
+	</script>
+
+
+	<script>
+		const sc = document.createElement('script');
+		sc.src = 'js/main.js?rand=' + Math.random() * 9999;
+		sc.async = true;
+		document.head.appendChild(sc);
+
+	</script>
+</head>
+
+<style>
+	body:not(.web3) .web3true {
+		display: none;
+	}
+
+	.home .swapcard {
+		height: 175px;
+	}
+
+	.home .swapcard2 {
+		height: 115px;
+	}
+
+	.web3 .web3false {
+		display: none
+	}
+
+	* {
+		font-weight: 400 !important;
+	}
+
+	.yield-badge {
+		position: absolute;
+		right: -10px;
+		top: -10px;
+		font-size: 20px;
+	}
+
+	body.approved .not-approved-spend {
+		display: none
+	}
+
+	body:not(.approved) .approved-spend {
+		display: none
+	}
+
+	* {
+		font-family: Balsamiq Sans, Arial, Times New Roman !important;
+	}
+
+	html {
+		height: 100%;
+		background-color: #433030 !important
+	}
+
+	body {
+		/* background-image: linear-gradient(180deg, #712e2c, #bd3434); */
+		background-color: rgba(239, 231, 234, .25);
+	}
+
+	.card {
+		background-color: rgba(0, 0, 0, 0.3)
+	}
+
+	.swapcard,
+	.swapcard2 {
+		display: inline-block;
+		width: 300px;
+		height: 240px;
+		margin: 10px;
+		transition: 1s box-shadow;
+	}
+
+	.swapcard:hover,
+	.swapcard2:hover {
+		box-shadow: 0 0 50px rgba(255, 255, 255, 0.3)
+	}
+
+	.tokenpair {
+		margin-bottom: 15px;
+	}
+
+	.token1,
+	.token2 {
+		display: inline-block;
+		height: 50px;
+		width: 50px;
+		border-radius: 99px;
+		border: 3px solid #FFF;
+		box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+		background: #000;
+		background-size: cover !important;
+	}
+
+	.token2 {
+		position: relative;
+		right: 8px
+	}
+
+	.token1 {
+		position: relative;
+		left: 8px;
+		z-index: 99;
+	}
+
+	.burger {
+		background: url('/images/burger-icon.png');
+
+	}
+
+	.sushi {
+		background-image: url('/images/sushi.png')
+	}
+
+	.eth {
+		background-image: url('/images/eth.png')
+	}
+
+	.usdc {
+		background-image: url('/images/usdc.png')
+	}
+
+	.usdt {
+		background-image: url('/images/usdt.png')
+	}
+
+	.susd {
+		background-image: url('/images/susd.png')
+	}
+
+	.band {
+		background-image: url('/images/band.png')
+	}
+
+	.tend {
+		background-image: url('images/tend.png')
+	}
+
+	.yfi {
+		background-image: url('images/yfi.png')
+	}
+</style>
+
+<body class="text-center">
+	<div class="content">
+		<div class="container d-flex w-100 h-100 mx-auto flex-column" style="z-index: 1;">
+			<header class="masthead">
+				<div class="inner">
+					<h3 class="masthead-brand" onclick="nav('home')">BURGER</h3>
+					<nav class="nav nav-masthead justify-content-center">
+						<a class="nav-link" href="#home" onclick="nav('home')">HOME</a>
+						<a class="nav-link" href="#farm" onclick="nav('farms')">FARM & TRADE</a>
+						<a class="nav-link" href="#about" onclick="nav('about')">ABOUT</a>
+					</nav>
+				</div>
+			</header>
+			<h3 class="mt-2 mb-4 cover-container">
+				We are burning 50% of dev Burger tokens accumulated till <a
+					href="https://etherscan.io/block/countdown/10800000" target="_blank"
+					rel="noreferrer nofollow noopener">block 10,800,000</a>.
+			</h3>
+			<h3 class="mt-2 cover-container">
+				See our stats, charts, listings etc. <a href="https://www.worldcoinindex.com/coin/burger"
+					target="_blank" rel="noreferrer nofollow noopener"><u>here</u></a>.
+			</h3>
+			<main role="main" class="inner cover pt-2 home mt-4">
+				<img src="images/burger-big.png" height="150" class="mb-4" />
+				<h1 class="cover-heading">BURGER MONEY</h1>
+				<p class="lead"></p>
+				<p class="lead web3false">
+					<a href="#" class="btn btn-lg btn-secondary" onclick="connectWeb3()">CONNECT WALLET</a>
+				</p>
+				<div class="cover-container mx-auto">
+					<div class="card swapcard hide web3true">
+						<div class="card-body">
+							<h6 class="card-subtitle mb-2 text-warning">YOUR BALANCE</h6>
+							<H3 class="card-text balance"><span>-.----</span> BURGER</H3>
+							<a href="#farms" onclick="nav('farms')" class="card-link btn btn-primary btn-lg">FARM</a>
+						</div>
+					</div>
+					<div class="card hide web3true swapcard">
+						<div class="card-body">
+							<h6 class="card-subtitle mb-2 text-warning">TOKEN PRICE</h6>
+							<H3 class="card-text tokenprice">-.----</H3>
+							<a href="#" class="card-link btn btn-primary btn-lg" onclick="getlptoken(5)">BUY</a>
+						</div>
+					</div>
+					<div class="card hide web3true swapcard2">
+						<div class="card-body">
+							<h6 class="card-subtitle mb-2 text-warning">Total value staked</h6>
+							<H3 class="card-text tvl">$<span>-.----</span></H3>
+						</div>
+					</div>
+
+					<div class="card hide web3true swapcard2">
+						<div class="card-body">
+							<h6 class="card-subtitle mb-2 text-warning">Marketcap</h6>
+							<H3 class="card-text mcap">$<span>-.----</span></H3>
+						</div>
+					</div>
+				</div>
+			</main>
+
+			<main role="main" class="inner cover about" STYLE="DISPLAY:NONE">
+				<p class="lead">Howdy Y'all!</p>
+				<!-- <img src="https://ih1.redbubble.net/image.707953223.5907/st,small,845x845-pad,1000x1000,f8f8f8.u2.jpg" /> -->
+				It's burger O'clock. Time to Defi
+				<br><br>
+				With 100 Burgers made after every block,
+				<br><br>
+				We can go 'gether like a burger and some French fry,
+				<br><br>
+				What are ya waitin for? Yippie kee yay mofo!
+				<br><br>
+				<br><br>
+
+				<div class="row">
+					<div class="card hide web3true col-xs-12 col-md-5">
+						<div class="card-body">
+							<h6 class="card-subtitle mb-2 text-warning">SUPPLY</h6>
+							<H3 class="card-text supply"><span>-.----</span> BURGERS</H3>
+						</div>
+					</div>
+					<div class="card hide web3true col-xs-12 offset-md-2 col-md-5">
+						<div class="card-body">
+							<h6 class="card-subtitle mb-2 text-warning">MARKET CAP</h6>
+							<H3 class="card-text mcap">$<span>-.----</span></H3>
+						</div>
+					</div>
+
+
+				</div>
+
+			</main>
+
+			<main role="main" class="inner cover farms " style="display:none">
+
+				<div class="cover-container mx-auto">
+					<div class="card swapcard">
+						<span class="badge badge-warning yield-badge">4x</span>
+						<div class="card-body">
+							<div class="tokenpair">
+								<div class="token1 burger"></div>
+								<div class="token2 eth"></div>
+							</div>
+							<h6 class="card-subtitle mb-2 text-warning">BURGER/ETH</h6>
+							<H3 class="card-text apy0">APY <span class="pool5yield">---.-%</span></H3>
+							<a href="#pool5" onclick="nav('pool5')" class="card-link btn btn-primary btn-lg">
+								Farm
+							</a>
+							<a href="#" class="card-link btn btn-primary btn-lg" onclick="getlptoken(5)">
+								Trade
+							</a>
+						</div>
+					</div>
+
+					<!-- <div class="card swapcard">
+						<div class="card-body">
+							<span class="badge badge-warning yield-badge">2x</span>
+							<div class="tokenpair">
+								<div class="token1 burger"></div>
+								<div class="token2 usdt"></div>
+							</div>
+							<h6 class="card-subtitle mb-2 text-warning">BURGER/USDT</h6>
+							<H3 class="card-text apy0">APY <span class="pool6yield">---.-%</span></H3>
+							<a href="#pool6" onclick="nav('pool6')" class="card-link btn btn-primary btn-lg">
+								Farm
+							</a>
+							<a href="#" class="card-link btn btn-primary btn-lg" onclick="getlptoken(6)">
+								Trade
+							</a>
+						</div>
+					</div> -->
+
+					<div class="card swapcard">
+						<div class="card-body">
+							<span class="badge badge-warning yield-badge"></span>
+							<div class="tokenpair">
+								<div class="token1 eth"></div>
+								<div class="token2 usdt"></div>
+							</div>
+							<h6 class="card-subtitle mb-2 text-warning">ETH/USDT</h6>
+							<H3 class="card-text apy0">APY <span class="pool0yield">---.-%</span></H3>
+							<a href="#pool0" onclick="nav('pool0')" class="card-link btn btn-primary btn-lg">
+								Farm
+							</a>
+							<a href="#" class="card-link btn btn-primary btn-lg" onclick="getlptoken(0)">
+								Trade
+							</a>
+						</div>
+					</div>
+
+					<div class="card swapcard ">
+						<span class="badge badge-warning yield-badge"></span>
+
+						<div class="card-body">
+							<div class="tokenpair">
+								<div class="token1 yfi"></div>
+								<div class="token2 eth"></div>
+							</div>
+							<h6 class="card-subtitle mb-2 text-warning">YFI/ETH</h6>
+							<H3 class="card-text apy0">APY <span class="pool1yield">---.-%</span></H3>
+							<a href="#pool1" onclick="nav('pool1')" class="card-link btn btn-primary btn-lg">
+								Farm
+							</a>
+							<a href="#" class="card-link btn btn-primary btn-lg" onclick="getlptoken(1)">
+								Trade
+							</a>
+						</div>
+					</div>
+
+					<div class="card swapcard ">
+						<span class="badge badge-warning yield-badge"></span>
+
+						<div class="card-body">
+							<div class="tokenpair">
+								<div class="token1 sushi"></div>
+								<div class="token2 eth"></div>
+							</div>
+							<h6 class="card-subtitle mb-2 text-warning">SUSHI/ETH</h6>
+							<H3 class="card-text apy0">APY <span class="pool2yield">---.-%</span></H3>
+							<a href="#pool2" onclick="nav('pool2')" class="card-link btn btn-primary btn-lg">
+								Farm
+							</a>
+							<a href="#" class="card-link btn btn-primary btn-lg" onclick="getlptoken(2)">
+								Trade
+							</a>
+						</div>
+					</div>
+
+					<div class="card swapcard">
+						<span class="badge badge-warning yield-badge"></span>
+
+						<div class="card-body">
+							<div class="tokenpair">
+								<div class="token1 susd"></div>
+								<div class="token2 eth"></div>
+							</div>
+							<h6 class="card-subtitle mb-2 text-warning">sUSD/ETH</h6>
+							<H3 class="card-text apy0">APY <span class="pool3yield">---.-%</span></H3>
+							<a href="#pool3" onclick="nav('pool3')" class="card-link btn btn-primary btn-lg">
+								Farm
+							</a>
+							<a href="#" class="card-link btn btn-primary btn-lg" onclick="getlptoken(3)">
+								Trade
+							</a>
+						</div>
+					</div>
+
+					<div class="card swapcard ">
+						<span class="badge badge-warning yield-badge"></span>
+						<div class="card-body">
+							<div class="tokenpair">
+								<div class="token1 usdc"></div>
+								<div class="token2 eth"></div>
+							</div>
+							<h6 class="card-subtitle mb-2 text-warning">USDC/ETH</h6>
+							<H3 class="card-text apy0">APY <span class="pool4yield">---.-%</span></H3>
+							<a href="#pool4" onclick="nav('pool4')" class="card-link btn btn-primary btn-lg">
+								Farm
+							</a>
+							<a href="#" class="card-link btn btn-primary btn-lg" onclick="getlptoken(4)">
+								Trade
+							</a>
+						</div>
+					</div>
+
+
+				</div>
+
+			</main>
+
+			<main role="main" class="inner cover pool" style="display:none">
+
+				<img src="images/burger-big.png" height="150" class="mb-4" />
+				<h1 class="cover-heading farmname">BURGER FARM</h1>
+				<p class="lead"></p>
+				<div class="row">
+					<div class="card hide web3true col-md-12 col-12">
+						<div class="card-body">
+							<h6 class="card-subtitle mb-2 text-warning">BURGER CLAIM</h6>
+							<H3 class="card-text rewardbalance">-.----</H3>
+							<a href="#" class="card-link btn btn-primary btn-lg" onclick="claimReward()">CLAIM</a>
+						</div>
+					</div>
+					<div class="card hide web3true  col-md-6 col-12">
+						<div class="card-body">
+							<h6 class="card-subtitle mb-2 text-warning">Your wallet</h6>
+							<H3 class="card-text walletbalance">-.----</H3>
+							<div class="not-approved-spend">
+								<a href="#" class="card-link btn btn-primary btn-lg" onclick="approveSpend()">APPROVE
+									SPEND</a>
+							</div>
+							<div class="approved-spend">
+								<a href="#" class="card-link btn btn-primary btn-lg" onclick="addToPool()">STAKE</a>
+							</div>
+
+						</div>
+					</div>
+					<div class="card hide web3true col-md-6 col-12">
+						<div class="card-body">
+							<h6 class="card-subtitle mb-2 text-warning">Staked token</h6>
+							<H3 class="card-text stakedbalance">-.----</H3>
+							<a href="#" class="card-link btn btn-primary btn-lg" onclick="removeFromPool()">-</a>
+						</div>
+					</div>
+					<div class="card hide web3true col-md-12 col-12">
+						<div class="card-body">
+							<a href="#" class="card-link btn btn-primary btn-lg" onclick="getlptoken()">Get LP Token To
+								Stake</a>
+						</div>
+					</div>
+				</div>
+
+			</main>
+		</div>
+	</div>
+
+	<footer class="mastfoot footer">
+		<div class="inner">
+			<p><a href="https://etherscan.io/address/0xeeb92d7e5c0341bc0325a959851c83db51df13a3#code"
+					target="_blank">Token Contract</a>
+				&mdash; <a href="https://etherscan.io/address/0x6df6516569ab0297cae9142c9b3343b7e4ab5724#code"
+					target="_blank">CHEF Contract</a>
+				<br /><br /> <a href="https://twitter.com/money_burger" target="_blank">Twitter</a>
+				&mdash;
+				<a href="https://discord.gg/7tJmY7" target="_blank">Discord</a>
+				&mdash;
+				<a href="https://t.me/burgermoney" target="_blank">Telegram</a>
+				&mdash; <a href="https://github.com/burgermoney/burger.money" target="_blank">Github</a></p>
+
+		</div>
+	</footer>
+	<style>
+		/*
+ * Globals
+ */
+		/* Links */
+		a,
+		a:focus,
+		a:hover {
+			color: #fff;
+		}
+
+		/* Custom default button */
+		.btn-secondary,
+		.btn-secondary:hover,
+		.btn-secondary:active,
+		.btn-secondary:focus {
+			color: #333;
+			text-shadow: none;
+			/* Prevent inheritance from `body` */
+			background-color: #fff;
+			border: .05rem solid #fff;
+		}
+
+		.btn-primary,
+		.btn-primary:hover,
+		.btn-primary:active,
+		.btn-primary:focus {
+			color: #fff !important;
+			text-shadow: none;
+			background-color: #e44541 !important;
+			border: .05rem solid #bf3a36 !important;
+			;
+		}
+
+
+		/*
+ * Base structure
+ */
+		html {
+			height: 100%;
+		}
+
+		body {
+			min-height: 100%;
+			display: -ms-flexbox;
+			display: flex;
+			color: #fff;
+			text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
+			box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);
+			padding: 50px 10px;
+		}
+
+		.cover-container {
+			max-width: 42em;
+		}
+
+		/*
+ * Header
+ */
+		.masthead {
+			margin-bottom: 2rem;
+		}
+
+		.masthead-brand {
+			margin-bottom: 0;
+		}
+
+		.nav-masthead .nav-link {
+			padding: 0.25rem 0;
+			color: rgba(255, 255, 255, 0.8);
+			background-color: transparent;
+			border-bottom: 0.25rem solid transparent;
+		}
+
+		.nav-masthead .nav-link:hover,
+		.nav-masthead .nav-link:focus {
+			border-bottom-color: rgba(255, 255, 255, .25);
+		}
+
+		.nav-masthead .nav-link+.nav-link {
+			margin-left: 1rem;
+		}
+
+		.nav-masthead .active {
+			color: #fff;
+			border-bottom-color: #fff;
+		}
+
+		@media (min-width: 48em) {
+			.masthead-brand {
+				float: left;
+			}
+
+			.nav-masthead {
+				float: right;
+			}
+		}
+
+		/*
+ * Cover
+ */
+		.cover {
+			padding: 4em 0rem;
+		}
+
+		.cover .btn-lg {
+			padding: .75rem 1.25rem;
+			font-weight: 700;
+		}
+
+		/*
+ * Footer
+ */
+		.mastfoot {
+			margin-top: 50px;
+			color: rgba(255, 255, 255, .5);
+		}
+	</style>
+</body>
+
+</html>

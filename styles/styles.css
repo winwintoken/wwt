@@ -1,0 +1,30 @@
+body {
+	padding: 50px;
+}
+
+body:before {
+	content: '';
+	position: fixed;
+	pointer-events: none;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	z-index: 0;
+	opacity: 0.07;
+}
+
+a {
+	color: #00b7ff;
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+}
+.content {
+	flex: 1 0 auto;
+}
+.footer {
+	flex-shrink: 0;
+}

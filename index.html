@@ -293,12 +293,16 @@
 					Cancle
 				</a>
 			</div>
-			<div>
+			<div id="stakediv">
 				<a  style="width: 60%;margin-bottom: 10%;" onclick="stakeSure()" class="card-link btn btn-primary btn-lg">
 					Stake
 				</a>
 			</div>
-			
+			<div id="withdrawdiv">
+				<a  style="width: 60%;margin-bottom: 10%;" onclick="withdrawSure()" class="card-link btn btn-primary btn-lg">
+					Withdraw
+				</a>
+			</div>
 		</div>
 		<div id="fade" class="black_overlay"></div>
 		
@@ -585,7 +589,7 @@ Adding more pools will subject to community vote.
 						<div class="card-body">
 							<h6 class="card-subtitle mb-2 text-warning">Your Staked</h6>
 							<H3 class="card-text stakedbalance">-.----</H3>
-							<a href="#" class="card-link btn btn-primary btn-lg" onclick="removeFromPool()">WITHDRAW</a>
+							<a href="#" class="card-link btn btn-primary btn-lg" onclick="withdraw()">WITHDRAW</a>
 						</div>
 					</div>
 				</div>

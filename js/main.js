@@ -3,7 +3,7 @@
 var walletConnect = false;
 var walletAddress;
 var balance = 0;
-var decimals=18;
+var decimals = 18;
 
 var tokenAddress; // wwt token
 var wwtlpAddress; //wwt lp token
@@ -96,15 +96,17 @@ var pools = [
 		"TT5eiN2GaGikcTUyPZcuHNj31f2edYzgBu",    //用来质押的代币地址，比如这个是wwt-trx lp 地址
 		'WWT/TRX',
 		'TMN2GpeJhYgwqPoRDbvevqtWKdwBBD3wqX',    //用来挖矿的地址，比如这个是矿池wwt-trx lp的地址
-		12,
-		0,
-		0,
+		12,			//池子权重
+		0,			//当前质押总数量
+		0,			//用户质押数量
+		0,			//用户拥有该代币数量
 	],
 	[
 		'TX3wPdSdnJ7wto4QyZ2J9QEVr5XcgEr6Cq',
 		'WWT',
 		'',
 		2,
+		0,
 		0,
 		0,
 	],
@@ -115,12 +117,14 @@ var pools = [
 		1,
 		0,
 		0,
+		0,
 	],
 	[
 		'TGbu32VEGpS4kDmjrmn5ZZJgUyHQiaweoq',
 		'PEARL',
 		'',
 		1,
+		0,
 		0,
 		0,
 	],
@@ -131,6 +135,7 @@ var pools = [
 		1,
 		0,
 		0,
+		0,
 	],
 	[
 		'TW1sqqq7UphAqGNHDXSLXsEainYHJuQeyC',
@@ -139,12 +144,14 @@ var pools = [
 		1,
 		0,
 		0,
+		0,
 	],
 	[
 		'TKkeiboTkxXKJpbmVFbv4a8ov5rAfRDMf9',
 		'SUN',
 		'',
 		1,
+		0,
 		0,
 		0,
 	],
@@ -234,8 +241,8 @@ function getSupply() {
 }
 function getBalance(address) {
 	async function triggercontract() {
-		console.log("tokenAddress="+tokenAddress);
-		console.log("wallet address="+address);
+		console.log("tokenAddress=" + tokenAddress);
+		console.log("wallet address=" + address);
 		let instance = await window.tronWeb.contract().at(tokenAddress);
 		let res = await instance.totalSupply().call();
 		console.log("total =" + res);
@@ -275,31 +282,43 @@ function initpooldata(id) {
 			//这是lp token，需要单独处理
 			//checkAllowance(userAddress, contractAddress)
 			allowance = await mm_tron.allowance(walletAddress, pools[id][0], pools[id][2]);
+			// console.log("allowance=" + allowance);
+			if (allowance > 0) {
+				$('body').addClass('approved');
+			}
 			let lpDecimals = await mm_tron.decimals(pools[id][0]);
-			console.log("lpDecimals="+lpDecimals);
-			let lpBalance = await mm_tron.balanceOf(walletAddress,pools[id][0],lpDecimals);
+			// console.log("lpDecimals="+lpDecimals);
+			let lpBalance = await mm_tron.balanceOf(walletAddress, pools[id][0], lpDecimals);
+			pools[id][6]  =lpBalance;
 			$('#maxAvaliable').text(lpBalance);
-		}else{
+		} else {
 			let tokenContract = await window.tronWeb.contract.at(pools[id][0]);
-			allowance = await tokenContract.allowance(walletAddress,pools[id][2]);
-		}
-		console.log("allowance=" + allowance);
-		if (allowance > 0) {
-			$('body').addClass('approved');
+			allowance = await tokenContract.allowance(walletAddress, pools[id][2]);
+			// console.log("allowance=" + allowance);
+			if (allowance > 0) {
+				$('body').addClass('approved');
+			}
+			let b = await tokenContract.balanceOf(walletAddress).call();
+			let d = await tokenContract.decimals().call();
+			let bb = b/Math.pow(10,decimals);
+			console.log("d="+d+",bb="+bb);
+			pools[id][6] = bb;
 		}
 
 		let poolContract = await window.tronWeb.contract().at(pools[id][2]);
 		let totalStake = await poolContract.totalSupply().call();
-		console.log("totalStake="+totalStake);
-		$('.totalstake').text((totalStake/Math.pow(10,decimals)).toFixedSpecial(4));
+		console.log("totalStake=" + totalStake);
+		$('.totalstake').text((totalStake / Math.pow(10, decimals)).toFixedSpecial(4));
+		pools[id][3] = totalStake / Math.pow(10, decimals);
 
 		let balance = await poolContract.balanceOf(walletAddress).call();
-		console.log("balance="+balance);
+		console.log("balance=" + balance);
 		balance = (balance / Math.pow(10, decimals)).toFixedSpecial(4);
-		console.log("balance="+balance);
+		console.log("balance=" + balance);
+		pools[id][4] = balance;
 		$('.stakedbalance').text(balance);
 
-		$('#stakeToken').text(pools[id][1]+" ");
+		$('#stakeToken').text(pools[id][1] + " ");
 
 		let earned = await poolContract.earned(walletAddress).call();
 		earned = (earned / Math.pow(10, decimals)).toFixedSpecial(4);
@@ -309,40 +328,42 @@ function initpooldata(id) {
 
 }
 function approveSpend() {
-	async function trigger(){
-		await mm_tron.approve(pools[currentPagePoolID][0],pools[currentPagePoolID][2]);
+	async function trigger() {
+		await mm_tron.approve(pools[currentPagePoolID][0], pools[currentPagePoolID][2]);
 	}
 	trigger();
 }
 
 function stake() {
+	document.getElementById("popTitle").innerHTML = "Stake";
+	$('#maxAvaliable').text(pools[currentPagePoolID][6]);
+	document.getElementById('stakeInput').value = 0;
+	$("#withdrawdiv").hide();
+	$("#stakediv").show();
 	showAlert();
-	// async function trigger(){
-	// 	let poolContract = await window.tronWeb.contract().at(pools[currentPagePoolID][2]);
-	// 	let totalStake = await poolContract.stake().call();
-	// }
-	// trigger();
-
-	// var contract = new web3.eth.Contract(chefABI, chefAddress);
-	// var amount = prompt(
-	// 	'Amount to stake',
-	// 	(currentPageWalletBalance - 1000000) / Math.pow(10, 18)
-	// ); // to fix round error due to JS
-
-	// contract.methods
-	// 	.deposit(
-	// 		currentPagePoolID,
-	// 		(amount * Math.pow(10, 18) - 100).toFixedSpecial(0)
-	// 	)
-	// 	.send({ from: walletAddress }, function (err, transactionHash) {
-	// 		//console.log(transactionHash)
-	// 	});
-
 }
 
-function maxStake(){
+function withdraw() {
+	document.getElementById("popTitle").innerHTML = "Withdraw";
+	$('#maxAvaliable').text(pools[currentPagePoolID][5]);
+	document.getElementById('stakeInput').value = 0;
+	$("#withdrawdiv").show();
+	$("#stakediv").hide();
+	//maxAvaliable
+	showAlert();
+}
+
+function withdrawSure() {
+	hideAlert();
+}
+
+function stakeSure() {
+	hideAlert();
+}
+
+function maxStake() {
 	var max = $('#maxAvaliable').text();
-	console.log("maxStake="+max);
+	console.log("maxStake=" + max);
 	document.getElementById('stakeInput').value = max
 	// var input = $("#stakeInput");
 	// input.attr("value","123")
@@ -350,9 +371,14 @@ function maxStake(){
 	// $('#stakeInput').setAttribute("value",max);
 }
 
-function showAlert(){
-	document.getElementById('light').style.display='block';
-	document.getElementById('fade').style.display='block';
+function showAlert() {
+	document.getElementById('light').style.display = 'block';
+	document.getElementById('fade').style.display = 'block';
+}
+
+function hideAlert() {
+	document.getElementById('light').style.display = 'none';
+	document.getElementById('fade').style.display = 'none';
 }
 
 function claimReward() {
@@ -438,7 +464,7 @@ function gettronweb() {
 
 function checkNode() {
 	var host = window.tronWeb.fullNode.host;
-	console.log("checkNode="+host);
+	console.log("checkNode=" + host);
 	if (host == "https://api.nileex.io") {
 		setNileNode();
 	} else if (host == "https://api.trongrid.io") {

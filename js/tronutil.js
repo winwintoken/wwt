@@ -434,9 +434,9 @@ mm_tron.prototype.balanceOf = async function(userAddress,tokenAddress,decimals) 
 		parameter
 	);
 	if (res && res.constant_result.length > 0) {
-		console.log("balanceOf="+res.constant_result[0]);
+		// console.log("balanceOf="+res.constant_result[0]);
 		let b = this.toChage_10(res.constant_result[0],Math.pow(10,decimals));
-		console.log("b="+b+",decimals="+decimals);
+		// console.log("b="+b+",decimals="+decimals);
 		return b;
 	}
 	return 0

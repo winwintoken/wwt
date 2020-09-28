@@ -8,12 +8,9 @@
 	<link rel="shortcut icon" href="images/logo.png">
 	<meta name="theme-color" content="#433030">
 	<link rel="preconnect" href="https://mainnet.eth.aragon.network" crossorigin>
-	<link rel="preconnect" href="https://fonts.googleapis.com/" crossorigin>
 	<link rel="preconnect" href="https://cdnjs.cloudflare.com/" crossorigin>
 	<link rel=" preconnect" href="https://stackpath.bootstrapcdn.com/" crossorigin>
-	<link rel=" preconnect" href="https://cdn.jsdelivr.net/npm/" crossorigin>
 	<link rel=" preconnect" href="https://raw.githubusercontent.com" crossorigin>
-	<link rel=" preconnect" href="https://unpkg.com" crossorigin>
 
 	<link rel="icon" href="images/logo.png">
 
@@ -29,13 +26,9 @@
 		crossorigin="anonymous"></script>
 	<script src="https://raw.githubusercontent.com/talmand/jquery-animate-numbers/master/jquery.animateNumbers.min.js"
 		type="javascript"></script>
-	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
-		integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
-		crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
 		integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
 		crossorigin="anonymous"></script>
-	<script src="https://unpkg.com/web3@latest/dist/web3.min.js"></script>
 
 	<script>
 		(function ($) {
@@ -291,9 +284,9 @@
 			<button style="position: absolute;right: 20px;" onclick = "document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'">X</button>
 
 			<div style="color: black;margin-top: 10%;">
-				<span id="maxAvaliable">100 </span><span id="stakeToken"> WWT/TRX LP</span> Avaliable
+				<span id="maxAvaliable">100</span><span> </span><span id="stakeToken"> WWT/TRX LP</span> Avaliable
 			</div>　　
-			<input id="input_template" name="name" type="number" style="width: 50%;" autofocus="autofocus" value="0" id="stakeInput">
+			<input name="name" type="number" style="width: 50%;" autofocus="autofocus" value="0" id="stakeInput">
 			<button onclick="maxStake()">MAX</button>
 			<div>
 				<a style="width: 60%;margin-top: 10%;margin-bottom: 10%;" onclick = "document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'" class="card-link btn btn-primary btn-lg">
@@ -595,9 +588,7 @@ Adding more pools will subject to community vote.
 							<a href="#" class="card-link btn btn-primary btn-lg" onclick="removeFromPool()">WITHDRAW</a>
 						</div>
 					</div>
-					
 				</div>
-
 			</main>
 		</div>
 	</div>

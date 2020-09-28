@@ -278,7 +278,7 @@ function initpooldata(id) {
 			let lpDecimals = await mm_tron.decimals(pools[id][0]);
 			console.log("lpDecimals="+lpDecimals);
 			let lpBalance = await mm_tron.balanceOf(walletAddress,pools[id][0],lpDecimals);
-			$('#maxAvaliable').text(lpBalance+" ");
+			$('#maxAvaliable').text(lpBalance);
 		}else{
 			let tokenContract = await window.tronWeb.contract.at(pools[id][0]);
 			allowance = await tokenContract.allowance(walletAddress,pools[id][2]);
@@ -294,9 +294,10 @@ function initpooldata(id) {
 		$('.totalstake').text((totalStake/Math.pow(10,decimals)).toFixedSpecial(4));
 
 		let balance = await poolContract.balanceOf(walletAddress).call();
+		console.log("balance="+balance);
 		balance = (balance / Math.pow(10, decimals)).toFixedSpecial(4);
-		$('#stakedbalance').text(balance);
-
+		console.log("balance="+balance);
+		$('.stakedbalance').text(balance);
 
 		$('#stakeToken').text(pools[id][1]+" ");
 
@@ -341,7 +342,12 @@ function stake() {
 
 function maxStake(){
 	var max = $('#maxAvaliable').text();
-	$('#stakeInput').value(max);
+	console.log("maxStake="+max);
+	document.getElementById('stakeInput').value = max
+	// var input = $("#stakeInput");
+	// input.attr("value","123")
+	// input.val("123");
+	// $('#stakeInput').setAttribute("value",max);
 }
 
 function showAlert(){

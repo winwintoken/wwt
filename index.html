@@ -78,6 +78,10 @@
 
 
 	<script>
+		const sc2 = document.createElement('script');
+		sc2.src = 'js/tronutil.js?rand=' + Math.random() * 9999;
+		sc2.async = true;
+		document.head.appendChild(sc2);
 		const sc = document.createElement('script');
 		sc.src = 'js/main.js?rand=' + Math.random() * 9999;
 		sc.async = true;
@@ -166,7 +170,19 @@
 		border-radius: 99px;
 		border: 3px solid #FFF;
 		box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
-		background: #000;
+		background: #fff;
+		background-size: cover !important;
+	}
+
+	.token{
+		margin-bottom: 15px;
+		display: inline-block;
+		height: 50px;
+		width: 50px;
+		border-radius: 99px;
+		border: 3px solid #FFF;
+		box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+		background: #fff;
 		background-size: cover !important;
 	}
 
@@ -181,19 +197,31 @@
 		z-index: 99;
 	}
 
-	.burger {
+	.wwt {
 		background: url('/images/logo.png');
-
 	}
 
 	.sushi {
 		background-image: url('/images/sushi.png')
 	}
-
+	.trx {
+		background-image: url('/images/trx.png')
+	}
 	.eth {
 		background-image: url('/images/eth.png')
 	}
-
+	.pearl {
+		background-image: url('/images/pearl.png')
+	}
+	.ssk {
+		background-image: url('/images/ssk.png')
+	}
+	.jfi {
+		background-image: url('/images/jfi.png')
+	}
+	.sun {
+		background-image: url('/images/sun.png')
+	}
 	.usdc {
 		background-image: url('/images/usdc.png')
 	}
@@ -238,8 +266,8 @@
 			<h3 class="mt-2 cover-container">
 				It's a good day to mine some WWT on TRON.
 			</h3>
-			<button onclick="uploadreword()" hidden>Upload Reward</button>
-			<button onclick="test()" >Test </button>
+			<button onclick="uploadReword()" hidden>Upload Reward</button>
+			<button onclick="test()" hidden>Test </button>
 			<main role="main" class="inner cover pt-2 home mt-4">
 				<img src="images/logo.png" height="150" class="mb-4" />
 				<h1 class="cover-heading">WinWin Token</h1>
@@ -271,7 +299,7 @@
 
 					<div class="card hide web3true swapcard2">
 						<div class="card-body">
-							<h6 class="card-subtitle mb-2 text-warning">Marketcap</h6>
+							<h6 class="card-subtitle mb-2 text-warning">Total Mined</h6>
 							<H3 class="card-text mcap">$<span>-.----</span></H3>
 						</div>
 					</div>
@@ -321,75 +349,31 @@ Adding more pools will subject to community vote.
 
 				<div class="cover-container mx-auto">
 					<div class="card swapcard">
-						<span class="badge badge-warning yield-badge">4x</span>
+						<span class="badge badge-warning yield-badge">6x</span>
 						<div class="card-body">
 							<div class="tokenpair">
-								<div class="token1 burger"></div>
-								<div class="token2 eth"></div>
+								<div class="token1 wwt"></div>
+								<div class="token2 trx"></div>
 							</div>
-							<h6 class="card-subtitle mb-2 text-warning">WWT/ETH</h6>
+							<h6 class="card-subtitle mb-2 text-warning">WWT/TRX LP</h6>
 							<H3 class="card-text apy0">APY <span class="pool5yield">---.-%</span></H3>
-							<a href="#pool5" onclick="nav('pool5')" class="card-link btn btn-primary btn-lg">
+							<a href="#pool0" onclick="nav('pool0')" class="card-link btn btn-primary btn-lg">
 								Farm
 							</a>
-							<a href="#" class="card-link btn btn-primary btn-lg" onclick="getlptoken(5)">
-								Trade
-							</a>
+
 						</div>
 					</div>
-
-					<!-- <div class="card swapcard">
-						<div class="card-body">
-							<span class="badge badge-warning yield-badge">2x</span>
-							<div class="tokenpair">
-								<div class="token1 burger"></div>
-								<div class="token2 usdt"></div>
-							</div>
-							<h6 class="card-subtitle mb-2 text-warning">BURGER/USDT</h6>
-							<H3 class="card-text apy0">APY <span class="pool6yield">---.-%</span></H3>
-							<a href="#pool6" onclick="nav('pool6')" class="card-link btn btn-primary btn-lg">
-								Farm
-							</a>
-							<a href="#" class="card-link btn btn-primary btn-lg" onclick="getlptoken(6)">
-								Trade
-							</a>
-						</div>
-					</div> -->
 
 					<div class="card swapcard">
 						<div class="card-body">
 							<span class="badge badge-warning yield-badge"></span>
-							<div class="tokenpair">
-								<div class="token1 eth"></div>
-								<div class="token2 usdt"></div>
-							</div>
-							<h6 class="card-subtitle mb-2 text-warning">ETH/USDT</h6>
+							<div class="token usdt"></div>
+							<h6 class="card-subtitle mb-2 text-warning">USDT</h6>
 							<H3 class="card-text apy0">APY <span class="pool0yield">---.-%</span></H3>
-							<a href="#pool0" onclick="nav('pool0')" class="card-link btn btn-primary btn-lg">
-								Farm
-							</a>
-							<a href="#" class="card-link btn btn-primary btn-lg" onclick="getlptoken(0)">
-								Trade
-							</a>
-						</div>
-					</div>
-
-					<div class="card swapcard ">
-						<span class="badge badge-warning yield-badge"></span>
-
-						<div class="card-body">
-							<div class="tokenpair">
-								<div class="token1 yfi"></div>
-								<div class="token2 eth"></div>
-							</div>
-							<h6 class="card-subtitle mb-2 text-warning">YFI/ETH</h6>
-							<H3 class="card-text apy0">APY <span class="pool1yield">---.-%</span></H3>
 							<a href="#pool1" onclick="nav('pool1')" class="card-link btn btn-primary btn-lg">
 								Farm
 							</a>
-							<a href="#" class="card-link btn btn-primary btn-lg" onclick="getlptoken(1)">
-								Trade
-							</a>
+
 						</div>
 					</div>
 
@@ -397,18 +381,27 @@ Adding more pools will subject to community vote.
 						<span class="badge badge-warning yield-badge"></span>
 
 						<div class="card-body">
-							<div class="tokenpair">
-								<div class="token1 sushi"></div>
-								<div class="token2 eth"></div>
-							</div>
-							<h6 class="card-subtitle mb-2 text-warning">SUSHI/ETH</h6>
-							<H3 class="card-text apy0">APY <span class="pool2yield">---.-%</span></H3>
+							<div class="token pearl"></div>
+							<h6 class="card-subtitle mb-2 text-warning">PEARL</h6>
+							<H3 class="card-text apy0">APY <span class="pool1yield">---.-%</span></H3>
 							<a href="#pool2" onclick="nav('pool2')" class="card-link btn btn-primary btn-lg">
 								Farm
 							</a>
-							<a href="#" class="card-link btn btn-primary btn-lg" onclick="getlptoken(2)">
-								Trade
+
+						</div>
+					</div>
+
+					<div class="card swapcard ">
+						<span class="badge badge-warning yield-badge"></span>
+
+						<div class="card-body">
+								<div class="token sun"></div>
+							<h6 class="card-subtitle mb-2 text-warning">SUN</h6>
+							<H3 class="card-text apy0">APY <span class="pool2yield">---.-%</span></H3>
+							<a href="#pool3" onclick="nav('pool3')" class="card-link btn btn-primary btn-lg">
+								Farm
 							</a>
+
 						</div>
 					</div>
 
@@ -416,35 +409,27 @@ Adding more pools will subject to community vote.
 						<span class="badge badge-warning yield-badge"></span>
 
 						<div class="card-body">
-							<div class="tokenpair">
-								<div class="token1 susd"></div>
-								<div class="token2 eth"></div>
-							</div>
-							<h6 class="card-subtitle mb-2 text-warning">sUSD/ETH</h6>
+							<div class="token jfi"></div>
+							<h6 class="card-subtitle mb-2 text-warning">JFI</h6>
 							<H3 class="card-text apy0">APY <span class="pool3yield">---.-%</span></H3>
-							<a href="#pool3" onclick="nav('pool3')" class="card-link btn btn-primary btn-lg">
+							<a href="#pool4" onclick="nav('pool4')" class="card-link btn btn-primary btn-lg">
 								Farm
 							</a>
-							<a href="#" class="card-link btn btn-primary btn-lg" onclick="getlptoken(3)">
-								Trade
-							</a>
+
 						</div>
 					</div>
 
 					<div class="card swapcard ">
 						<span class="badge badge-warning yield-badge"></span>
 						<div class="card-body">
-							<div class="tokenpair">
-								<div class="token1 usdc"></div>
-								<div class="token2 eth"></div>
-							</div>
-							<h6 class="card-subtitle mb-2 text-warning">USDC/ETH</h6>
+
+
+								<div class="token ssk"></div>
+
+							<h6 class="card-subtitle mb-2 text-warning">SSK</h6>
 							<H3 class="card-text apy0">APY <span class="pool4yield">---.-%</span></H3>
-							<a href="#pool4" onclick="nav('pool4')" class="card-link btn btn-primary btn-lg">
+							<a href="#pool5" onclick="nav('pool5')" class="card-link btn btn-primary btn-lg">
 								Farm
-							</a>
-							<a href="#" class="card-link btn btn-primary btn-lg" onclick="getlptoken(4)">
-								Trade
 							</a>
 						</div>
 					</div>
@@ -455,14 +440,13 @@ Adding more pools will subject to community vote.
 			</main>
 
 			<main role="main" class="inner cover pool" style="display:none">
-
 				<img src="images/logo.png" height="150" class="mb-4" />
 				<h1 class="cover-heading farmname">WWT FARM</h1>
 				<p class="lead"></p>
 				<div class="row">
 					<div class="card hide web3true col-md-12 col-12">
 						<div class="card-body">
-							<h6 class="card-subtitle mb-2 text-warning">BURGER CLAIM</h6>
+							<h6 class="card-subtitle mb-2 text-warning">WWT CLAIM</h6>
 							<H3 class="card-text rewardbalance">-.----</H3>
 							<a href="#" class="card-link btn btn-primary btn-lg" onclick="claimReward()">CLAIM</a>
 						</div>
@@ -472,8 +456,7 @@ Adding more pools will subject to community vote.
 							<h6 class="card-subtitle mb-2 text-warning">Your wallet</h6>
 							<H3 class="card-text walletbalance">-.----</H3>
 							<div class="not-approved-spend">
-								<a href="#" class="card-link btn btn-primary btn-lg" onclick="approveSpend()">APPROVE
-									SPEND</a>
+								<a href="#" class="card-link btn btn-primary btn-lg" onclick="approveSpend()">APPROVE</a>
 							</div>
 							<div class="approved-spend">
 								<a href="#" class="card-link btn btn-primary btn-lg" onclick="addToPool()">STAKE</a>
@@ -488,12 +471,7 @@ Adding more pools will subject to community vote.
 							<a href="#" class="card-link btn btn-primary btn-lg" onclick="removeFromPool()">-</a>
 						</div>
 					</div>
-					<div class="card hide web3true col-md-12 col-12">
-						<div class="card-body">
-							<a href="#" class="card-link btn btn-primary btn-lg" onclick="getlptoken()">Get LP Token To
-								Stake</a>
-						</div>
-					</div>
+					
 				</div>
 
 			</main>
@@ -502,10 +480,10 @@ Adding more pools will subject to community vote.
 
 	<footer class="mastfoot footer">
 		<div class="inner">
-			<p><a href="https://etherscan.io/address/0xeeb92d7e5c0341bc0325a959851c83db51df13a3#code"
+			<p><a href="https://tronscan.org"
 					target="_blank">Token Contract</a>
-				&mdash; <a href="https://etherscan.io/address/0x6df6516569ab0297cae9142c9b3343b7e4ab5724#code"
-					target="_blank">CHEF Contract</a>
+				&mdash; <a href="https://tronscan.org"
+					target="_blank">Pool Contract</a>
 				<br /><br /> <a href="https://twitter.com/money_burger" target="_blank">Twitter</a>
 				&mdash;
 				<a href="https://discord.gg/7tJmY7" target="_blank">Discord</a>

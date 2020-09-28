@@ -3,7 +3,7 @@ function mm_tron(config) {
 		name: "",
 		contract_address: "",
 		chainId: 3,
-		precision: 100000000
+		precision: 100000000000000000
 	}, config);
 
 	/**
@@ -16,6 +16,7 @@ function mm_tron(config) {
 	 */
 	this.methods = {};
 }
+
 
 /**
  * 获取合约方法集合
@@ -332,10 +333,7 @@ mm_tron.prototype.get_address = function() {
  * @param {String} contractAddress 代币合约地址
  * @return {String} 是否有授权
  */
-mm_tron.prototype.allowance = async function(userAddress, contractAddress) {
-	// TGEA5wkr1A6pkmwdLrepv63dNKi6rFinWL   lp-pool
-	// TCPwAERu17bxQGBU2BnrXzjJUCqW7h2X4U   lp-token
-
+mm_tron.prototype.allowance = async function(userAddress, tokenAddress,spenderAddress) {
 	var functionSelector = "allowance(address,address)";
 	var parameter = [{
 		type: "address",
@@ -343,12 +341,36 @@ mm_tron.prototype.allowance = async function(userAddress, contractAddress) {
 	}, {
 		type: 'address',
 		// 池子地址
-		value: this.config.contract_address
+		value: spenderAddress
 	}];
 	var options = {};
 
 	var res = await tronWeb.transactionBuilder.triggerConstantContract(
-		contractAddress,
+		tokenAddress,
+		functionSelector,
+		options,
+		parameter,
+	);
+	if (res && res.constant_result.length > 0) {
+		return this.toChage_10(res.constant_result[0])
+	}
+	return 0
+};
+
+async function checkAllowance(userAddress, tokenAddress,spenderAddress) {
+	var functionSelector = "allowance(address,address)";
+	var parameter = [{
+		type: "address",
+		value: userAddress
+	}, {
+		type: 'address',
+		// 池子地址
+		value: spenderAddress
+	}];
+	var options = {};
+
+	var res = await tronWeb.transactionBuilder.triggerConstantContract(
+		tokenAddress,
 		functionSelector,
 		options,
 		parameter,
@@ -365,13 +387,13 @@ mm_tron.prototype.allowance = async function(userAddress, contractAddress) {
  * @param {String} contractAddress 授权地址
  * @return {String} 授权结果
  */
-mm_tron.prototype.approve = async function(contractAddress) {
+mm_tron.prototype.approve = async function(tokenAddress,spenderAddress) {
 	// var functionSelector = "allowance(address,address)";
 	var functionSelector = "approve(address,uint256)";
 
 	var parameter = [{
 			type: "address",
-			value: this.config.contract_address
+			value: spenderAddress
 		},
 		{
 			type: "uint256",
@@ -380,7 +402,7 @@ mm_tron.prototype.approve = async function(contractAddress) {
 	];
 	var options = {};
 	let tx = await tronWeb.transactionBuilder.triggerSmartContract(
-		contractAddress,
+		tokenAddress,
 		functionSelector,
 		options,
 		parameter

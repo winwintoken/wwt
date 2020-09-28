@@ -1,13 +1,15 @@
 // note: USDT, USDC decimal = 6
 
-var ethconnected = false;
-var ethaddress = '0x';
+var walletConnect = false;
+var walletAddress;
 var balance = 0;
 var web3 = new Web3(
 	new Web3.providers.HttpProvider('https://mainnet.eth.aragon.network/')
 );
 var chefAddress = '0x6df6516569ab0297cae9142c9b3343b7e4ab5724'; // chef
-var tokenAddress = '0xeeb92d7e5c0341bc0325a959851c83db51df13a3'; // burger token
+var tokenAddress = 'TX3wPdSdnJ7wto4QyZ2J9QEVr5XcgEr6Cq'; // burger token
+
+
 var currentPageToken = '0x';
 var currentPagePoolID = 0;
 var currentPageWalletBalance = 0;
@@ -23,6 +25,48 @@ var prices = {
 	sushieth: -1,
 	susdeth: -1,
 };
+
+const trx_address = "T9ycGdsTDc9hAVobuNauvZAd14dt9LVyee";
+const usdt_address = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
+const pearl_address = "TGbu32VEGpS4kDmjrmn5ZZJgUyHQiaweoq";
+const jfi_address = "TN7zQd2oCCguSQykZ437tZzLEaGJ7EGyha";
+
+var usdt_price=0;
+var pearl_price=0;
+var jfi_price=0;
+
+function parseJustswapData(data){
+	// console.log("parseJustswapData : "+data);
+	var tmp = eval('(' + data + ')'); 
+	var d = tmp.data;
+	var usdt = d["0_"+usdt_address];
+	if(usdt){
+		usdt_price = usdt.price;
+		console.log("price:u="+usdt_price+",jfi="+jfi_price+",pearl="+pearl_price);
+	}
+	var pearl = d["0_"+pearl_address];
+	if(pearl){
+		pearl_price = pearl.price;
+		console.log("price:u="+usdt_price+",jfi="+jfi_price+",pearl="+pearl_price);
+	}
+	var jfi = d["0_"+jfi_address];
+	if(jfi){
+		jfi_price = jfi.price;
+		console.log("price:u="+usdt_price+",jfi="+jfi_price+",pearl="+pearl_price);
+	}
+	// console.log("parseJustswapData finish");
+}
+
+function loadJustswapData(){
+	for(var i=0;i<20;i++){
+		$("#div1").load('https://api.justswap.io/v2/allpairs?page_size=100&page_num='+i,function(response,status,xhr){
+			if(status){
+				parseJustswapData(response);
+			}
+		});
+	}
+}
+
 //contract,name,url,weight,yield
 var pools = [
 	[
@@ -1561,28 +1605,28 @@ function updateYield() {
 	// });
 }
 
-async function connectWeb3() {
-	if (window.ethereum) {
-		window.web3 = new Web3(window.ethereum);
-		conn = await window.ethereum.enable();
-		//console.log(conn.length)
+// async function connectWeb3() {
+// 	if (window.ethereum) {
+// 		window.web3 = new Web3(window.ethereum);
+// 		conn = await window.ethereum.enable();
+// 		//console.log(conn.length)
 
-		ethconnected = conn.length > 0;
-		if (ethconnected) {
-			ethaddress = conn[0];
-		}
-		updateConnectStatus();
-		web3.eth.getAccounts(); //.then(console.log);
+// 		walletConnect = conn.length > 0;
+// 		if (walletConnect) {
+// 			walletAddress = conn[0];
+// 		}
+// 		updateConnectStatus();
+// 		web3.eth.getAccounts(); //.then(console.log);
 
-		return true;
-	}
-}
+// 		return true;
+// 	}
+// }
 
 function updateConnectStatus() {
-	if (ethconnected) {
+	if (walletConnect) {
 		$('body').addClass('web3');
 	}
-	getBalance(ethaddress);
+	getBalance(walletAddress);
 }
 function getSupply() {
 	var contract = new web3.eth.Contract(tokenABI, tokenAddress);
@@ -1595,16 +1639,19 @@ function getSupply() {
 	});
 }
 function getBalance(address) {
-	var contract = new web3.eth.Contract(tokenABI, tokenAddress);
-	contract.methods.balanceOf(address).call(function (error, result) {
-		contract.methods.decimals().call(function (error, d) {
-			result = result / Math.pow(10, d);
-			//console.log(error, result);
-			$('.balance').text(result.toFixedSpecial(2) + ' WWT');
-			balance = result;
-		});
-	});
+	async function triggercontract() {
+	let instance = await window.tronWeb.contract().at(tokenAddress);
+	let res = await instance.totalSupply().call();
+	console.log("total =" + res);
+	let balanceOf = await instance.balanceOf(address).call();
+	let decimals = await instance.decimals().call();
+
+	balance = balanceOf / Math.pow(10, decimals);
+	$('.balance').text(balance.toFixedSpecial(2) + ' WWT');
+	}
+	triggercontract();
 }
+
 function hidepages() {
 	$('main').hide();
 }
@@ -1616,6 +1663,7 @@ function nav(classname) {
 		initpooldata(parseInt(classname.slice(-1)));
 		$('main.pool').show();
 	}
+	loadJustswapData();
 }
 function initpooldata(id) {
 	$('.farmname').text(pools[id][1] + ' pool');
@@ -1628,7 +1676,7 @@ function initpooldata(id) {
 
 	var contract = new web3.eth.Contract(chefABI, chefAddress);
 	contract.methods
-		.userInfo(currentPagePoolID, ethaddress)
+		.userInfo(currentPagePoolID, walletAddress)
 		.call(function (error, result) {
 			currentPageStaked = result[0];
 			result[0] = (result[0] / Math.pow(10, 18)).toFixedSpecial(7);
@@ -1638,7 +1686,7 @@ function initpooldata(id) {
 
 	var pagetoken = new web3.eth.Contract(erc20ABI, currentPageToken);
 	pagetoken.methods
-		.allowance(ethaddress, chefAddress)
+		.allowance(walletAddress, chefAddress)
 		.call(function (error, result) {
 			if (result > 0) {
 				$('body').addClass('approved');
@@ -1646,7 +1694,7 @@ function initpooldata(id) {
 		});
 
 	contract.methods
-		.pendingBurger(currentPagePoolID, ethaddress)
+		.pendingBurger(currentPagePoolID, walletAddress)
 		.call(function (error, result) {
 			currentPageReward = result;
 			result = (result / Math.pow(10, 18)).toFixedSpecial(3);
@@ -1657,7 +1705,7 @@ function initpooldata(id) {
 	//get wallet balance
 
 	var contract = new web3.eth.Contract(erc20ABI, currentPageToken);
-	contract.methods.balanceOf(ethaddress).call(function (error, result) {
+	contract.methods.balanceOf(walletAddress).call(function (error, result) {
 		contract.methods.decimals().call(function (error, d) {
 			currentPageWalletBalance = result;
 			result = (result / Math.pow(10, d)).toFixedSpecial(7);
@@ -1674,7 +1722,7 @@ function approveSpend() {
 			chefAddress,
 			'10000000000000000000000000000000000000000000000000000000'
 		)
-		.send({ from: ethaddress }, function (err, transactionHash) {
+		.send({ from: walletAddress }, function (err, transactionHash) {
 			//some code
 			alert(
 				'Please wait until the approve transaction confirm to stake your pool token. You can refresh the page to update'
@@ -1704,7 +1752,7 @@ function addToPool() {
 			currentPagePoolID,
 			(amount * Math.pow(10, 18) - 100).toFixedSpecial(0)
 		)
-		.send({ from: ethaddress }, function (err, transactionHash) {
+		.send({ from: walletAddress }, function (err, transactionHash) {
 			//console.log(transactionHash)
 		});
 }
@@ -1712,7 +1760,7 @@ function claimReward() {
 	var contract = new web3.eth.Contract(chefABI, chefAddress);
 	contract.methods
 		.deposit(currentPagePoolID, 0)
-		.send({ from: ethaddress }, function (err, transactionHash) {
+		.send({ from: walletAddress }, function (err, transactionHash) {
 			//some code
 			//console.log(transactionHash)
 		});
@@ -1728,7 +1776,7 @@ function removeFromPool() {
 			currentPagePoolID,
 			(amount * Math.pow(10, 18)).toFixedSpecial(0)
 		)
-		.send({ from: ethaddress }, function (err, transactionHash) {
+		.send({ from: walletAddress }, function (err, transactionHash) {
 			//some code
 			//console.log(transactionHash)
 		});
@@ -1793,10 +1841,30 @@ function getlptoken(id) {
 		window.open(pools[id][2]);
 	}
 }
-function init() {
-	connectWeb3();
+// function init() {
+// 	connectWeb3();
+// }
+// init();
+
+var timer = setInterval(() => {
+    console.log("address start")
+    gettronweb();
+}, 1000);
+
+function gettronweb() {
+    if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
+        console.log("address Yes:" + window.tronWeb.defaultAddress.base58)
+        walletAddress = window.tronWeb.defaultAddress.base58;
+		clearInterval(timer);
+		walletConnect = true;
+		updateConnectStatus();
+		loadJustswapData();
+    } else {
+        console.log("address No")
+        wallet_address.textContent = "未连接钱包（需要安装TronLink钱包）";
+    }
 }
-init();
+
 Number.prototype.toFixedSpecial = function (n) {
 	var str = this.toFixed(n);
 	if (str.indexOf('e+') === -1) return str;
@@ -1812,7 +1880,7 @@ Number.prototype.toFixedSpecial = function (n) {
 
 	return str;
 };
-getUniswapPrice();
+// getUniswapPrice();
 
 setInterval(function () {
 	initpooldata(currentPagePoolID);

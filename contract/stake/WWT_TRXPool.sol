@@ -53,10 +53,10 @@ contract LPTokenWrapper {
     }
 }
 
-contract SunSUNTRXPool is LPTokenWrapper, IRewardDistributionRecipient {
+contract WWTRXPool is LPTokenWrapper, IRewardDistributionRecipient {
     // wwtToken
-    ITRC20 public wwtToken = ITRC20(0x6b5151320359Ec18b08607c70a3b7439Af626aa3);
-    uint256 public constant DURATION = 1_209_600; // 14 days
+    ITRC20 public wwtToken = ITRC20(0x41c8e782045cf996e8af0708323c416fff1313b8a6);
+    uint256 public DURATION = 1_209_600; // 14 days
 
     uint256 public starttime = 1600268400; // 2020/9/16 23:0:0 (UTC UTC +08:00)
     uint256 public periodFinish = 0;
@@ -73,10 +73,11 @@ contract SunSUNTRXPool is LPTokenWrapper, IRewardDistributionRecipient {
     event Rescue(address indexed dst, uint sad);
     event RescueToken(address indexed dst,address indexed token, uint sad);
 
-    constructor(address _trc20, uint256 _starttime) public{
+    constructor(address _trc20, uint256 _starttime,uint256 duration) public{
         tokenAddr = ITRC20(_trc20);
         rewardDistribution = _msgSender();
         starttime = _starttime;
+        DURATION = duration;
     }
 
 
@@ -149,7 +150,7 @@ contract SunSUNTRXPool is LPTokenWrapper, IRewardDistributionRecipient {
         uint256 trueReward = earned(msg.sender);
         if (trueReward > 0) {
             rewards[msg.sender] = 0;
-            sunToken.safeTransfer(msg.sender, trueReward);
+            wwtToken.safeTransfer(msg.sender, trueReward);
             emit RewardPaid(msg.sender, trueReward);
         }
     }
@@ -199,7 +200,7 @@ contract SunSUNTRXPool is LPTokenWrapper, IRewardDistributionRecipient {
     {
         require(to_ != address(0), "must not 0");
         require(amount_ > 0, "must gt 0");
-        require(token_ != sunToken, "must not sunToken");
+        require(token_ != wwtToken, "must not wwtToken");
         require(token_ != tokenAddr, "must not this plToken");
 
         token_.transfer(to_, amount_);

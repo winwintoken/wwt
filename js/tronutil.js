@@ -415,10 +415,7 @@ mm_tron.prototype.approve = async function(tokenAddress,spenderAddress) {
  * 获取余额
  * @param {String} userAddress 用户地址
  */
-mm_tron.prototype.balanceOf = async function(userAddress,tokenAddress) {
-	//TGEA5wkr1A6pkmwdLrepv63dNKi6rFinWL   lp-pool
-	//TCPwAERu17bxQGBU2BnrXzjJUCqW7h2X4U   lp-token
-
+mm_tron.prototype.balanceOf = async function(userAddress,tokenAddress,decimals) {
 	var contractAddress = tokenAddress;
 
 	var functionSelector = "balanceOf(address)";
@@ -430,13 +427,47 @@ mm_tron.prototype.balanceOf = async function(userAddress,tokenAddress) {
 
 	var options = {};
 	
-	return await tronWeb.transactionBuilder.triggerConstantContract(
+	var res =  await tronWeb.transactionBuilder.triggerConstantContract(
 		contractAddress,
 		functionSelector,
 		options,
 		parameter
 	);
+	if (res && res.constant_result.length > 0) {
+		console.log("balanceOf="+res.constant_result[0]);
+		let b = this.toChage_10(res.constant_result[0],decimals);
+		console.log("b="+b+",decimals="+decimals);
+		return b;
+	}
+	return 0
 };
+
+
+/**
+ * 获取lp token 精度
+ * @param {String} userAddress 用户地址
+ */
+mm_tron.prototype.decimals = async function(tokenAddress) {
+	var functionSelector = "decimals()";
+
+	var parameter = [];
+
+	var options = {};
+	
+	var res =  await tronWeb.transactionBuilder.triggerConstantContract(
+		tokenAddress,
+		functionSelector,
+		options,
+		parameter
+	);
+	if (res && res.constant_result.length > 0) {
+		let d = this.toChage_10(res.constant_result[0],1);
+		return d;
+	}
+	return 18
+};
+
+
 
 mm_tron.prototype.stake = async function(amount) {
 	let contractPool = this.config.contract_address;

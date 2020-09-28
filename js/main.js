@@ -38,13 +38,17 @@ const wwt_address = "xx";
 
 
 function setNileNode() {
-	tokenAddress = 'TX3wPdSdnJ7wto4QyZ2J9QEVr5XcgEr6Cq'; // wwt token
-	wwtlpAddress = "TT5eiN2GaGikcTUyPZcuHNj31f2edYzgBu"; //wwt lp token
-	wwtPoolAddress = "TMN2GpeJhYgwqPoRDbvevqtWKdwBBD3wqX"; //wwt-lp pool address
+	console.log("setNileNode");
+	tokenAddress = contractAddresses['testWwtTokenAddress']; // wwt token
+	wwtlpAddress = contractAddresses['testWwtLPAddress']; //wwt lp token
+	wwtPoolAddress = contractAddresses['testWwtPoolAddress']; //wwt-lp pool address
 }
 
 function setMainNode() {
-
+	console.log("setMainNode");
+	tokenAddress = contractAddresses['wwtTokenAddress']; // wwt token
+	wwtlpAddress = contractAddresses['wwtLPAddress']; //wwt lp token
+	wwtPoolAddress = contractAddresses['wwtPoolAddress']; //wwt-lp pool address
 }
 
 function parseJustswapData(data) {
@@ -92,46 +96,54 @@ var pools = [
 		"TT5eiN2GaGikcTUyPZcuHNj31f2edYzgBu",    //用来质押的代币地址，比如这个是wwt-trx lp 地址
 		'WWT/TRX',
 		'TMN2GpeJhYgwqPoRDbvevqtWKdwBBD3wqX',    //用来挖矿的地址，比如这个是矿池wwt-trx lp的地址
-		6,
+		12,
 		0,
 		0,
 	],
 	[
-		'0x2fdbadf3c4d5a8666bc06645b8358ab803996e28',
+		'TX3wPdSdnJ7wto4QyZ2J9QEVr5XcgEr6Cq',
+		'WWT',
+		'',
+		2,
+		0,
+		0,
+	],
+	[
+		'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t',
 		'USDT',
-		'https://uniswap.info/pair/0x2fdbadf3c4d5a8666bc06645b8358ab803996e28',
+		'',
 		1,
 		0,
 		0,
 	],
 	[
-		'0xce84867c3c02b05dc570d0135103d3fb9cc19433',
+		'TGbu32VEGpS4kDmjrmn5ZZJgUyHQiaweoq',
 		'PEARL',
-		'https://uniswap.info/pair/0xce84867c3c02b05dc570d0135103d3fb9cc19433',
+		'',
 		1,
 		0,
 		0,
 	],
 	[
-		'0xf80758ab42c3b07da84053fd88804bcb6baa4b5c',
-		'SUN',
-		'https://uniswap.info/pair/0xf80758ab42c3b07da84053fd88804bcb6baa4b5c',
+		'TSNWgunSeGUQqBKK4bM31iLw3bn9SBWWTG',
+		'COLA',
+		'',
 		1,
 		0,
 		0,
 	],
 	[
-		'0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc',
-		'JFI',
-		'https://uniswap.info/pair/0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc',
-		1,
-		0,
-		0,
-	],
-	[
-		'0x923687DdD21B22AcA8cd6f227FcdE603737FfbE5',
+		'TW1sqqq7UphAqGNHDXSLXsEainYHJuQeyC',
 		'SSK',
-		'https://uniswap.info/pair/0x923687DdD21B22AcA8cd6f227FcdE603737FfbE5',
+		'',
+		1,
+		0,
+		0,
+	],
+	[
+		'TKkeiboTkxXKJpbmVFbv4a8ov5rAfRDMf9',
+		'SUN',
+		'',
 		1,
 		0,
 		0,
@@ -168,115 +180,6 @@ function updateYield() {
 					percentageOfSupplyInPool;
 				//console.log(result2,result3,percentageOfSupplyInPool,perpoolunit,result1['_reserve1']/Math.pow(10,18),pools[0][3]);
 				$('.pool0yield').animateNumbers(parseInt(pools[0][4]) + '%');
-				loadedPool();
-			});
-		});
-	});
-
-	var ctx3 = new web3.eth.Contract(uniswapABI, pools[1][0]);
-	ctx3.methods.getReserves().call(function (err, result1) {
-		ctx3.methods.totalSupply().call(function (err, result2) {
-			ctx3.methods.balanceOf(chefAddress).call(function (err, result3) {
-				//console.log('YFI/ETH ctx3:',result1['_reserve0'],result1['_reserve1']);
-				var totalSupply = result2; // total supply of UNI-V2
-				var stakedSupply = result3; // staked amount in chef
-				//console.log(result2,result3);
-				var percentageOfSupplyInPool = stakedSupply / totalSupply;
-				// total liquidity ~ 2*(single token liquidity)*(staked percentage), reserve0 = YFI (18), reserve1 = ETH (18)
-				pools[1][4] =
-					(((perpoolunit * prices['burgereth']) /
-						((result1['_reserve1'] * 2) / Math.pow(10, 18))) *
-						100 *
-						pools[1][3]) /
-					percentageOfSupplyInPool;
-				pools[1][5] =
-					((prices['ethusd'] * result1['_reserve1'] * 2) /
-						Math.pow(10, 18)) *
-					percentageOfSupplyInPool;
-				//console.log(result2,result3,percentageOfSupplyInPool,perpoolunit,result1['_reserve1']/Math.pow(10,18),pools[1][3]);
-				$('.pool1yield').animateNumbers(parseInt(pools[1][4]) + '%');
-				loadedPool();
-			});
-		});
-	});
-
-	var ctx4 = new web3.eth.Contract(uniswapABI, pools[2][0]);
-	ctx4.methods.getReserves().call(function (err, result1) {
-		ctx4.methods.totalSupply().call(function (err, result2) {
-			ctx4.methods.balanceOf(chefAddress).call(function (err, result3) {
-				//console.log('YFI/ETH ctx3:',result1['_reserve0'],result1['_reserve1']);
-				var totalSupply = result2; // total supply of UNI-V2
-				var stakedSupply = result3; // staked amount in chef
-				//console.log(result2,result3);
-				var percentageOfSupplyInPool = stakedSupply / totalSupply;
-				// total liquidity ~ 2*(single token liquidity)*(staked percentage), reserve0 = SUSHI (18), reserve1 = ETH (18)
-				pools[2][4] =
-					(((perpoolunit * prices['burgereth']) /
-						((result1['_reserve1'] * 2) / Math.pow(10, 18))) *
-						100 *
-						pools[2][3]) /
-					percentageOfSupplyInPool;
-				pools[2][5] =
-					((prices['ethusd'] * result1['_reserve1'] * 2) /
-						Math.pow(10, 18)) *
-					percentageOfSupplyInPool;
-
-				//console.log(result2,result3,percentageOfSupplyInPool,perpoolunit,result1['_reserve1']/Math.pow(10,18),pools[2][3]);
-				$('.pool2yield').animateNumbers(parseInt(pools[2][4]) + '%');
-				loadedPool();
-			});
-		});
-	});
-
-	var ctx5 = new web3.eth.Contract(uniswapABI, pools[3][0]);
-	ctx5.methods.getReserves().call(function (err, result1) {
-		ctx5.methods.totalSupply().call(function (err, result2) {
-			ctx5.methods.balanceOf(chefAddress).call(function (err, result3) {
-				//console.log('sUSD/ETH ctx5:',result1['_reserve0'],result1['_reserve1']);
-				var totalSupply = result2; // total supply of UNI-V2
-				var stakedSupply = result3; // staked amount in chef
-				//console.log(result2,result3);
-				var percentageOfSupplyInPool = stakedSupply / totalSupply;
-				// total liquidity ~ 2*(single token liquidity)*(staked percentage), reserve0 = sUSD (18), reserve1 = ETH (18)
-				pools[3][4] =
-					(((perpoolunit * prices['burgereth']) /
-						((result1['_reserve1'] * 2) / Math.pow(10, 18))) *
-						100 *
-						pools[3][3]) /
-					percentageOfSupplyInPool;
-				pools[3][5] =
-					((prices['ethusd'] * result1['_reserve1'] * 2) /
-						Math.pow(10, 18)) *
-					percentageOfSupplyInPool;
-				//console.log(result2,result3,percentageOfSupplyInPool,perpoolunit,result1['_reserve1']/Math.pow(10,18),pools[3][3]);
-				$('.pool3yield').animateNumbers(parseInt(pools[3][4]) + '%');
-				loadedPool();
-			});
-		});
-	});
-
-	var ctx6 = new web3.eth.Contract(uniswapABI, pools[4][0]);
-	ctx6.methods.getReserves().call(function (err, result1) {
-		ctx6.methods.totalSupply().call(function (err, result2) {
-			ctx6.methods.balanceOf(chefAddress).call(function (err, result3) {
-				//console.log('USDC/ETH ctx6:',result1['_reserve0'],result1['_reserve1']);
-				var totalSupply = result2; // total supply of UNI-V2
-				var stakedSupply = result3; // staked amount in chef
-				//console.log(result2,result3);
-				var percentageOfSupplyInPool = stakedSupply / totalSupply;
-				// total liquidity ~ 2*(single token liquidity)*(staked percentage), reserve1 = USDC (6), reserve0 = ETH (18)
-				pools[4][4] =
-					(((perpoolunit * prices['burgereth']) /
-						((result1['_reserve1'] * 2) / Math.pow(10, 18))) *
-						100 *
-						pools[4][3]) /
-					percentageOfSupplyInPool;
-				pools[4][5] =
-					((prices['ethusd'] * result1['_reserve1'] * 2) /
-						Math.pow(10, 18)) *
-					percentageOfSupplyInPool;
-				//console.log(result2,result3,percentageOfSupplyInPool,perpoolunit,result1['_reserve1']/Math.pow(10,18),pools[4][3]);
-				$('.pool4yield').animateNumbers(parseInt(pools[4][4]) + '%');
 				loadedPool();
 			});
 		});
@@ -331,6 +234,8 @@ function getSupply() {
 }
 function getBalance(address) {
 	async function triggercontract() {
+		console.log("tokenAddress="+tokenAddress);
+		console.log("wallet address="+address);
 		let instance = await window.tronWeb.contract().at(tokenAddress);
 		let res = await instance.totalSupply().call();
 		console.log("total =" + res);
@@ -370,6 +275,10 @@ function initpooldata(id) {
 			//这是lp token，需要单独处理
 			//checkAllowance(userAddress, contractAddress)
 			allowance = await mm_tron.allowance(walletAddress, pools[id][0], pools[id][2]);
+			let lpDecimals = await mm_tron.decimals(pools[id][0]);
+			console.log("lpDecimals="+lpDecimals);
+			let lpBalance = await mm_tron.balanceOf(walletAddress,pools[id][0],lpDecimals);
+			$('#maxAvaliable').text(lpBalance+" ");
 		}else{
 			let tokenContract = await window.tronWeb.contract.at(pools[id][0]);
 			allowance = await tokenContract.allowance(walletAddress,pools[id][2]);
@@ -386,7 +295,10 @@ function initpooldata(id) {
 
 		let balance = await poolContract.balanceOf(walletAddress).call();
 		balance = (balance / Math.pow(10, decimals)).toFixedSpecial(4);
-		$('.stakedbalance').text(balance);
+		$('#stakedbalance').text(balance);
+
+
+		$('#stakeToken').text(pools[id][1]+" ");
 
 		let earned = await poolContract.earned(walletAddress).call();
 		earned = (earned / Math.pow(10, decimals)).toFixedSpecial(4);
@@ -403,17 +315,18 @@ function approveSpend() {
 }
 
 function stake() {
-	async function trigger(){
-		let poolContract = await window.tronWeb.contract().at(pools[id][2]);
-		let totalStake = await poolContract.stake().call();
-	}
-	trigger();
+	showAlert();
+	// async function trigger(){
+	// 	let poolContract = await window.tronWeb.contract().at(pools[currentPagePoolID][2]);
+	// 	let totalStake = await poolContract.stake().call();
+	// }
+	// trigger();
 
 	// var contract = new web3.eth.Contract(chefABI, chefAddress);
-	var amount = prompt(
-		'Amount to stake',
-		(currentPageWalletBalance - 1000000) / Math.pow(10, 18)
-	); // to fix round error due to JS
+	// var amount = prompt(
+	// 	'Amount to stake',
+	// 	(currentPageWalletBalance - 1000000) / Math.pow(10, 18)
+	// ); // to fix round error due to JS
 
 	// contract.methods
 	// 	.deposit(
@@ -424,6 +337,16 @@ function stake() {
 	// 		//console.log(transactionHash)
 	// 	});
 
+}
+
+function maxStake(){
+	var max = $('#maxAvaliable').text();
+	$('#stakeInput').value(max);
+}
+
+function showAlert(){
+	document.getElementById('light').style.display='block';
+	document.getElementById('fade').style.display='block';
 }
 
 function claimReward() {
@@ -451,34 +374,7 @@ function removeFromPool() {
 			//console.log(transactionHash)
 		});
 }
-function getUniswapPrice() {
-	var ctx0 = new web3.eth.Contract(uniswapABI, pools[5][0]); // burger-eth
-	var ctx1 = new web3.eth.Contract(uniswapABI, uni1); // usdc-eth
-	try {
-		ctx0.methods.getReserves().call(function (err, result1) {
-			//console.log(err,result1);
-			ctx1.methods.getReserves().call(function (err, result2) {
-				var burgereth = result1['_reserve0'] / result1['_reserve1'];
 
-				prices['burgereth'] = burgereth;
-
-				// // eth/usd approximation by ETH-USDC pair
-				var ethusd =
-					(result2['_reserve0'] / result2['_reserve1']) *
-					Math.pow(10, 18 - 6); // cause USDC uses 6 decimal
-				prices['ethusd'] = ethusd;
-
-				var burgerusd = burgereth * ethusd;
-				prices['burgerusd'] = burgerusd;
-				getSupply();
-
-				updatePrice(prices['burgerusd']);
-			});
-		});
-	} catch (e) {
-		console.error(e);
-	}
-}
 function loadedPool() {
 	loadedpools++;
 
@@ -536,6 +432,7 @@ function gettronweb() {
 
 function checkNode() {
 	var host = window.tronWeb.fullNode.host;
+	console.log("checkNode="+host);
 	if (host == "https://api.nileex.io") {
 		setNileNode();
 	} else if (host == "https://api.trongrid.io") {
@@ -562,11 +459,10 @@ Number.prototype.toFixedSpecial = function (n) {
 
 	return str;
 };
-// getUniswapPrice();
+
 
 setInterval(function () {
 	initpooldata(currentPagePoolID);
-	getUniswapPrice();
 }, 30000);
 
 

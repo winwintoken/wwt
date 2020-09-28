@@ -78,6 +78,11 @@
 
 
 	<script>
+		const sc3 = document.createElement('script');
+		sc3.src = 'js/contract.js?rand=' + Math.random() * 9999;
+		sc3.async = true;
+		document.head.appendChild(sc3);
+
 		const sc2 = document.createElement('script');
 		sc2.src = 'js/tronutil.js?rand=' + Math.random() * 9999;
 		sc2.async = true;
@@ -91,6 +96,36 @@
 </head>
 
 <style>
+	.black_overlay{
+            display: none;
+            position: absolute;
+            top: 0%;
+            left: 0%;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index:1001;
+            -moz-opacity: 0.8;
+            opacity:.80;
+            filter: alpha(opacity=88);
+        }
+        .white_content {
+			display: none;
+    		text-align: center;
+			position: absolute;
+			border-radius: 25px;
+			top: 30%;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 500px;
+            height: 45%;
+            padding: 20px;
+            background-color: rgba(239, 231, 234, 255);
+            z-index:1002;
+            overflow: auto;
+		}
+		
+	
 	body:not(.web3) .web3true {
 		display: none;
 	}
@@ -201,14 +236,32 @@
 		background: url('/images/logo.png');
 	}
 
-	.sushi {
-		background-image: url('/images/sushi.png')
+	.smp {
+		background: url('/images/smp.png');
 	}
+
+	.cola {
+		background: url('/images/cola.png');
+	}
+
+
+	.tai {
+		background: url('/images/tai.png');
+	}
+
 	.trx {
 		background-image: url('/images/trx.png')
 	}
-	.eth {
-		background-image: url('/images/eth.png')
+
+	.ht {
+		background-image: url('/images/ht.png')
+	}
+
+	.gold {
+		background-image: url('/images/gold.jpeg')
+	}
+	.dzi {
+		background-image: url('/images/dzi.png')
 	}
 	.pearl {
 		background-image: url('/images/pearl.png')
@@ -222,34 +275,40 @@
 	.sun {
 		background-image: url('/images/sun.png')
 	}
-	.usdc {
-		background-image: url('/images/usdc.png')
-	}
-
 	.usdt {
 		background-image: url('/images/usdt.png')
 	}
 
-	.susd {
-		background-image: url('/images/susd.png')
-	}
 
-	.band {
-		background-image: url('/images/band.png')
-	}
-
-	.tend {
-		background-image: url('images/tend.png')
-	}
-
-	.yfi {
-		background-image: url('images/yfi.png')
-	}
 </style>
 
 <body class="text-center">
 	<div id="div1" hidden></div>
 	<div class="content">
+
+        <div id="light" class="white_content">
+			<span style="color: black;text-align: center;font-size: 24px;" id="popTitle">Stake</span>　　　
+			<button style="position: absolute;right: 20px;" onclick = "document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'">X</button>
+
+			<div style="color: black;margin-top: 10%;">
+				<span id="maxAvaliable">100 </span><span id="stakeToken"> WWT/TRX LP</span> Avaliable
+			</div>　　
+			<input id="input_template" name="name" type="number" style="width: 50%;" autofocus="autofocus" value="0" id="stakeInput">
+			<button onclick="maxStake()">MAX</button>
+			<div>
+				<a style="width: 60%;margin-top: 10%;margin-bottom: 10%;" onclick = "document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'" class="card-link btn btn-primary btn-lg">
+					Cancle
+				</a>
+			</div>
+			<div>
+				<a  style="width: 60%;margin-bottom: 10%;" onclick="stakeSure()" class="card-link btn btn-primary btn-lg">
+					Stake
+				</a>
+			</div>
+			
+		</div>
+		<div id="fade" class="black_overlay"></div>
+		
 		<div class="container d-flex w-100 h-100 mx-auto flex-column" style="z-index: 1;">
 			<header class="masthead">
 				<div class="inner">
@@ -290,17 +349,23 @@
 							<a href="#" class="card-link btn btn-primary btn-lg" onclick="getlptoken(5)">BUY</a>
 						</div>
 					</div>
-					<div class="card hide web3true swapcard2">
+					<div class="card hide web3true swapcard2" hidden>
 						<div class="card-body">
 							<h6 class="card-subtitle mb-2 text-warning">Total value staked</h6>
 							<H3 class="card-text tvl">$<span>-.----</span></H3>
 						</div>
 					</div>
 
-					<div class="card hide web3true swapcard2">
+					<div class="card hide web3true swapcard2" hidden>
 						<div class="card-body">
 							<h6 class="card-subtitle mb-2 text-warning">Total Mined</h6>
 							<H3 class="card-text mcap">$<span>-.----</span></H3>
+						</div>
+					</div>
+					<div class="card hide web3true swapcard2">
+						<div class="card-body">
+							<h6 class="card-subtitle mb-2 text-warning">Total Supply</h6>
+							<H3 class="card-text mcap"><span>2100.00 </span> WWT</H3>
 						</div>
 					</div>
 				</div>
@@ -326,30 +391,12 @@ Adding more pools will subject to community vote.
 				<br><br>
 				<br><br>
 
-				<div class="row">
-					<div class="card hide web3true col-xs-12 col-md-5">
-						<div class="card-body">
-							<h6 class="card-subtitle mb-2 text-warning">SUPPLY</h6>
-							<H3 class="card-text supply"><span>-.----</span> WWT</H3>
-						</div>
-					</div>
-					<div class="card hide web3true col-xs-12 offset-md-2 col-md-5">
-						<div class="card-body">
-							<h6 class="card-subtitle mb-2 text-warning">MARKET CAP</h6>
-							<H3 class="card-text mcap">$<span>-.----</span></H3>
-						</div>
-					</div>
-
-
-				</div>
-
 			</main>
 
 			<main role="main" class="inner cover farms " style="display:none">
-
-				<div class="cover-container mx-auto">
+				<div class="cover-container mx-auto" style="max-width: 62em;" >
 					<div class="card swapcard">
-						<span class="badge badge-warning yield-badge">6x</span>
+						<span class="badge badge-warning yield-badge">12x</span>
 						<div class="card-body">
 							<div class="tokenpair">
 								<div class="token1 wwt"></div>
@@ -366,14 +413,25 @@ Adding more pools will subject to community vote.
 
 					<div class="card swapcard">
 						<div class="card-body">
-							<span class="badge badge-warning yield-badge"></span>
-							<div class="token usdt"></div>
-							<h6 class="card-subtitle mb-2 text-warning">USDT</h6>
+							<span class="badge badge-warning yield-badge">2x</span>
+							<div class="token wwt"></div>
+							<h6 class="card-subtitle mb-2 text-warning">WWT</h6>
 							<H3 class="card-text apy0">APY <span class="pool0yield">---.-%</span></H3>
 							<a href="#pool1" onclick="nav('pool1')" class="card-link btn btn-primary btn-lg">
 								Farm
 							</a>
+						</div>
+					</div>
 
+					<div class="card swapcard">
+						<div class="card-body">
+							<span class="badge badge-warning yield-badge"></span>
+							<div class="token usdt"></div>
+							<h6 class="card-subtitle mb-2 text-warning">USDT</h6>
+							<H3 class="card-text apy0">APY <span class="pool0yield">---.-%</span></H3>
+							<a href="#pool2" onclick="nav('pool2')" class="card-link btn btn-primary btn-lg">
+								Farm
+							</a>
 						</div>
 					</div>
 
@@ -384,10 +442,37 @@ Adding more pools will subject to community vote.
 							<div class="token pearl"></div>
 							<h6 class="card-subtitle mb-2 text-warning">PEARL</h6>
 							<H3 class="card-text apy0">APY <span class="pool1yield">---.-%</span></H3>
-							<a href="#pool2" onclick="nav('pool2')" class="card-link btn btn-primary btn-lg">
+							<a href="#pool3" onclick="nav('pool3')" class="card-link btn btn-primary btn-lg">
+								Farm
+							</a>
+						</div>
+					</div>
+
+
+					<div class="card swapcard ">
+						<span class="badge badge-warning yield-badge"></span>
+
+						<div class="card-body">
+								<div class="token cola"></div>
+							<h6 class="card-subtitle mb-2 text-warning">COLA</h6>
+							<H3 class="card-text apy0">APY <span class="pool2yield">---.-%</span></H3>
+							<a href="#pool4" onclick="nav('pool4')" class="card-link btn btn-primary btn-lg">
 								Farm
 							</a>
 
+						</div>
+					</div>
+
+
+					<div class="card swapcard ">
+						<span class="badge badge-warning yield-badge"></span>
+						<div class="card-body">
+							<div class="token ssk"></div>
+							<h6 class="card-subtitle mb-2 text-warning">SSK</h6>
+							<H3 class="card-text apy0">APY <span class="pool4yield">---.-%</span></H3>
+							<a href="#pool5" onclick="nav('pool5')" class="card-link btn btn-primary btn-lg" >
+								Farm
+							</a>
 						</div>
 					</div>
 
@@ -398,7 +483,7 @@ Adding more pools will subject to community vote.
 								<div class="token sun"></div>
 							<h6 class="card-subtitle mb-2 text-warning">SUN</h6>
 							<H3 class="card-text apy0">APY <span class="pool2yield">---.-%</span></H3>
-							<a href="#pool3" onclick="nav('pool3')" class="card-link btn btn-primary btn-lg">
+							<a href="#pool6" onclick="nav('pool6')" class="card-link btn btn-primary btn-lg">
 								Farm
 							</a>
 
@@ -406,37 +491,76 @@ Adding more pools will subject to community vote.
 					</div>
 
 					<div class="card swapcard">
-						<span class="badge badge-warning yield-badge"></span>
+						<span class="badge badge-warning yield-badge">Comming Soon</span>
 
 						<div class="card-body">
 							<div class="token jfi"></div>
 							<h6 class="card-subtitle mb-2 text-warning">JFI</h6>
 							<H3 class="card-text apy0">APY <span class="pool3yield">---.-%</span></H3>
-							<a href="#pool4" onclick="nav('pool4')" class="card-link btn btn-primary btn-lg">
+							<a href="#pool7" onclick="nav('pool7')" class="card-link btn btn-primary btn-lg" style="pointer-events: none;">
 								Farm
 							</a>
 
 						</div>
 					</div>
 
-					<div class="card swapcard ">
-						<span class="badge badge-warning yield-badge"></span>
+
+					<div class="card swapcard">
+						<span class="badge badge-warning yield-badge">Comming Soon</span>
+
 						<div class="card-body">
-
-
-								<div class="token ssk"></div>
-
-							<h6 class="card-subtitle mb-2 text-warning">SSK</h6>
-							<H3 class="card-text apy0">APY <span class="pool4yield">---.-%</span></H3>
-							<a href="#pool5" onclick="nav('pool5')" class="card-link btn btn-primary btn-lg">
+							<div class="token ht"></div>
+							<h6 class="card-subtitle mb-2 text-warning">HT</h6>
+							<H3 class="card-text apy0">APY <span class="pool3yield">---.-%</span></H3>
+							<a href="#pool8" onclick="nav('pool8')" class="card-link btn btn-primary btn-lg" style="pointer-events: none;">
 								Farm
 							</a>
+
 						</div>
 					</div>
 
+					<div class="card swapcard">
+						<span class="badge badge-warning yield-badge">Comming Soon</span>
 
+						<div class="card-body">
+							<div class="token dzi"></div>
+							<h6 class="card-subtitle mb-2 text-warning">DZI</h6>
+							<H3 class="card-text apy0">APY <span class="pool3yield">---.-%</span></H3>
+							<a href="#pool9" onclick="nav('pool9')" class="card-link btn btn-primary btn-lg" style="pointer-events: none;">
+								Farm
+							</a>
+
+						</div>
+					</div>
+
+					<div class="card swapcard">
+						<span class="badge badge-warning yield-badge">Comming Soon</span>
+
+						<div class="card-body">
+							<div class="token gold"></div>
+							<h6 class="card-subtitle mb-2 text-warning">GOLD</h6>
+							<H3 class="card-text apy0">APY <span class="pool3yield">---.-%</span></H3>
+							<a href="#pool10" onclick="nav('pool10')" class="card-link btn btn-primary btn-lg" style="pointer-events: none;">
+								Farm
+							</a>
+
+						</div>
+					</div>
+
+					<div class="card swapcard">
+						<span class="badge badge-warning yield-badge">Comming Soon</span>
+
+						<div class="card-body">
+							<div class="token tai"></div>
+							<h6 class="card-subtitle mb-2 text-warning">TAI</h6>
+							<H3 class="card-text apy0">APY <span class="pool3yield">---.-%</span></H3>
+							<a href="#pool11" onclick="nav('pool11')" class="card-link btn btn-primary btn-lg" style="pointer-events: none;">
+								Farm
+							</a>
+
+						</div>
+					</div>
 				</div>
-
 			</main>
 
 			<main role="main" class="inner cover pool" style="display:none">

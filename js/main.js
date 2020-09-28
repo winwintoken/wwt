@@ -7,8 +7,9 @@ var web3 = new Web3(
 	new Web3.providers.HttpProvider('https://mainnet.eth.aragon.network/')
 );
 var chefAddress = '0x6df6516569ab0297cae9142c9b3343b7e4ab5724'; // chef
-var tokenAddress = 'TX3wPdSdnJ7wto4QyZ2J9QEVr5XcgEr6Cq'; // burger token
-
+var tokenAddress; // wwt token
+var wwtlpAddress; //wwt lp token
+var wwtPoolAddress; //wwt-lp pool address
 
 var currentPageToken = '0x';
 var currentPagePoolID = 0;
@@ -30,37 +31,54 @@ const trx_address = "T9ycGdsTDc9hAVobuNauvZAd14dt9LVyee";
 const usdt_address = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
 const pearl_address = "TGbu32VEGpS4kDmjrmn5ZZJgUyHQiaweoq";
 const jfi_address = "TN7zQd2oCCguSQykZ437tZzLEaGJ7EGyha";
+const wwt_address = "xx";
 
-var usdt_price=0;
-var pearl_price=0;
-var jfi_price=0;
+var usdt_price = 0;
+var pearl_price = 0;
+var jfi_price = 0;
+var wwt_price = 1000;
 
-function parseJustswapData(data){
+function setNileNode(){
+	 tokenAddress = 'TX3wPdSdnJ7wto4QyZ2J9QEVr5XcgEr6Cq'; // wwt token
+	 wwtlpAddress = "TT5eiN2GaGikcTUyPZcuHNj31f2edYzgBu"; //wwt lp token
+	 wwtPoolAddress = "TMN2GpeJhYgwqPoRDbvevqtWKdwBBD3wqX"; //wwt-lp pool address
+}
+
+function setMainNode(){
+	
+}
+
+function parseJustswapData(data) {
 	// console.log("parseJustswapData : "+data);
-	var tmp = eval('(' + data + ')'); 
+	var tmp = eval('(' + data + ')');
 	var d = tmp.data;
-	var usdt = d["0_"+usdt_address];
-	if(usdt){
+	var usdt = d["0_" + usdt_address];
+	if (usdt) {
 		usdt_price = usdt.price;
-		console.log("price:u="+usdt_price+",jfi="+jfi_price+",pearl="+pearl_price);
+		console.log("price:u=" + usdt_price + ",jfi=" + jfi_price + ",pearl=" + pearl_price);
 	}
-	var pearl = d["0_"+pearl_address];
-	if(pearl){
+	var pearl = d["0_" + pearl_address];
+	if (pearl) {
 		pearl_price = pearl.price;
-		console.log("price:u="+usdt_price+",jfi="+jfi_price+",pearl="+pearl_price);
+		console.log("price:u=" + usdt_price + ",jfi=" + jfi_price + ",pearl=" + pearl_price);
 	}
-	var jfi = d["0_"+jfi_address];
-	if(jfi){
+	var jfi = d["0_" + jfi_address];
+	if (jfi) {
 		jfi_price = jfi.price;
-		console.log("price:u="+usdt_price+",jfi="+jfi_price+",pearl="+pearl_price);
+		console.log("price:u=" + usdt_price + ",jfi=" + jfi_price + ",pearl=" + pearl_price);
+	}
+	var wwt = d["0_" + wwt_address];
+	if (wwt) {
+		wwt_price = wwt.price;
+		console.log("price:u=" + usdt_price + ",jfi=" + jfi_price + ",pearl=" + pearl_price+",wwt="+wwt_price);
 	}
 	// console.log("parseJustswapData finish");
 }
 
-function loadJustswapData(){
-	for(var i=0;i<20;i++){
-		$("#div1").load('https://api.justswap.io/v2/allpairs?page_size=100&page_num='+i,function(response,status,xhr){
-			if(status){
+function loadJustswapData() {
+	for (var i = 0; i < 20; i++) {
+		$("#div1").load('https://api.justswap.io/v2/allpairs?page_size=100&page_num=' + i, function (response, status, xhr) {
+			if (status) {
 				parseJustswapData(response);
 			}
 		});
@@ -1640,14 +1658,14 @@ function getSupply() {
 }
 function getBalance(address) {
 	async function triggercontract() {
-	let instance = await window.tronWeb.contract().at(tokenAddress);
-	let res = await instance.totalSupply().call();
-	console.log("total =" + res);
-	let balanceOf = await instance.balanceOf(address).call();
-	let decimals = await instance.decimals().call();
+		let instance = await window.tronWeb.contract().at(tokenAddress);
+		let res = await instance.totalSupply().call();
+		console.log("total =" + res);
+		let balanceOf = await instance.balanceOf(address).call();
+		let decimals = await instance.decimals().call();
 
-	balance = balanceOf / Math.pow(10, decimals);
-	$('.balance').text(balance.toFixedSpecial(2) + ' WWT');
+		balance = balanceOf / Math.pow(10, decimals);
+		$('.balance').text(balance.toFixedSpecial(2) + ' WWT');
 	}
 	triggercontract();
 }
@@ -1663,7 +1681,6 @@ function nav(classname) {
 		initpooldata(parseInt(classname.slice(-1)));
 		$('main.pool').show();
 	}
-	loadJustswapData();
 }
 function initpooldata(id) {
 	$('.farmname').text(pools[id][1] + ' pool');
@@ -1847,22 +1864,37 @@ function getlptoken(id) {
 // init();
 
 var timer = setInterval(() => {
-    console.log("address start")
-    gettronweb();
+	console.log("address start")
+	gettronweb();
 }, 1000);
 
 function gettronweb() {
-    if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
-        console.log("address Yes:" + window.tronWeb.defaultAddress.base58)
-        walletAddress = window.tronWeb.defaultAddress.base58;
+	if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
+		console.log("address Yes:" + window.tronWeb.defaultAddress.base58)
+		walletAddress = window.tronWeb.defaultAddress.base58;
 		clearInterval(timer);
 		walletConnect = true;
+		checkNode();
 		updateConnectStatus();
 		loadJustswapData();
-    } else {
-        console.log("address No")
-        wallet_address.textContent = "未连接钱包（需要安装TronLink钱包）";
-    }
+	} else {
+		console.log("address No")
+		wallet_address.textContent = "未连接钱包（需要安装TronLink钱包）";
+	}
+}
+
+
+
+function checkNode(){
+	var host = window.tronWeb.fullNode.host;
+	if(host=="https://api.nileex.io"){
+		setNileNode();
+	}else if(host=="https://api.trongrid.io"){
+		setMainNode();
+	}
+}
+
+function test(){
 }
 
 Number.prototype.toFixedSpecial = function (n) {
@@ -1886,3 +1918,28 @@ setInterval(function () {
 	initpooldata(currentPagePoolID);
 	getUniswapPrice();
 }, 30000);
+
+
+function uploadreword() {
+	//notifyRewardAmount
+	async function triggercontract() {
+		// var functionSelector = "allowance(address,address)";
+		var functionSelector = "notifyRewardAmount(uint256)";
+
+		var parameter = [{
+			type: "uint256",
+			value: window.tronWeb.toHex(600e18)
+		}
+		];
+		var options = {};
+		let tx = await tronWeb.transactionBuilder.triggerSmartContract(
+			wwtPoolAddress,
+			functionSelector,
+			options,
+			parameter
+		);
+		var signedTx = await tronWeb.trx.sign(tx.transaction);
+		await tronWeb.trx.sendRawTransaction(signedTx);
+	}
+	triggercontract();
+}

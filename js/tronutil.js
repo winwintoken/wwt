@@ -415,11 +415,11 @@ mm_tron.prototype.approve = async function(tokenAddress,spenderAddress) {
  * 获取余额
  * @param {String} userAddress 用户地址
  */
-mm_tron.prototype.balanceOf = async function(userAddress) {
+mm_tron.prototype.balanceOf = async function(userAddress,tokenAddress) {
 	//TGEA5wkr1A6pkmwdLrepv63dNKi6rFinWL   lp-pool
 	//TCPwAERu17bxQGBU2BnrXzjJUCqW7h2X4U   lp-token
 
-	var contractAddress = this.config.contract_address;
+	var contractAddress = tokenAddress;
 
 	var functionSelector = "balanceOf(address)";
 

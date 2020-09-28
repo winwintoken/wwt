@@ -3,6 +3,7 @@
 var walletConnect = false;
 var walletAddress;
 var balance = 0;
+var decimals=18;
 
 var tokenAddress; // wwt token
 var wwtlpAddress; //wwt lp token
@@ -334,7 +335,7 @@ function getBalance(address) {
 		let res = await instance.totalSupply().call();
 		console.log("total =" + res);
 		let balanceOf = await instance.balanceOf(address).call();
-		let decimals = await instance.decimals().call();
+		decimals = await instance.decimals().call();
 
 		balance = balanceOf / Math.pow(10, decimals);
 		$('.balance').text(balance.toFixedSpecial(2) + ' WWT');
@@ -364,59 +365,32 @@ function initpooldata(id) {
 
 		//get staked balance
 		//if larger than zero, approved
-
+		var allowance = 0;
 		if (id == 0) {
 			//这是lp token，需要单独处理
 			//checkAllowance(userAddress, contractAddress)
-			let allowance = await mm_tron.allowance(walletAddress, pools[id][0], pools[id][2]);
-			console.log("allowance=" + allowance);
-			if (allowance > 0) {
-				$('body').addClass('approved');
-			}
+			allowance = await mm_tron.allowance(walletAddress, pools[id][0], pools[id][2]);
+		}else{
+			let tokenContract = await window.tronWeb.contract.at(pools[id][0]);
+			allowance = await tokenContract.allowance(walletAddress,pools[id][2]);
+		}
+		console.log("allowance=" + allowance);
+		if (allowance > 0) {
+			$('body').addClass('approved');
 		}
 
-		// var contract = new web3.eth.Contract(chefABI, chefAddress);
-		// contract.methods
-		// 	.userInfo(currentPagePoolID, walletAddress)
-		// 	.call(function (error, result) {
-		// 		currentPageStaked = result[0];
-		// 		result[0] = (result[0] / Math.pow(10, 18)).toFixedSpecial(7);
-		// 		//console.log(error, result)
-		// 		$('.stakedbalance').text(result[0]);
-		// 	});
+		let poolContract = await window.tronWeb.contract().at(pools[id][2]);
+		let totalStake = await poolContract.totalSupply().call();
+		console.log("totalStake="+totalStake);
+		$('.totalstake').text((totalStake/Math.pow(10,decimals)).toFixedSpecial(4));
 
+		let balance = await poolContract.balanceOf(walletAddress).call();
+		balance = (balance / Math.pow(10, decimals)).toFixedSpecial(4);
+		$('.stakedbalance').text(balance);
 
-
-
-		// var pagetoken = new web3.eth.Contract(erc20ABI, currentPageToken);
-		// pagetoken.methods
-		// 	.allowance(walletAddress, chefAddress)
-		// 	.call(function (error, result) {
-		// 		if (result > 0) {
-		// 			$('body').addClass('approved');
-		// 		}
-		// 	});
-
-		// contract.methods
-		// 	.pendingBurger(currentPagePoolID, walletAddress)
-		// 	.call(function (error, result) {
-		// 		currentPageReward = result;
-		// 		result = (result / Math.pow(10, 18)).toFixedSpecial(3);
-		// 		//console.log(error, result)
-		// 		$('.rewardbalance').animateNumbers(result);
-		// 	});
-
-		// //get wallet balance
-
-		// var contract = new web3.eth.Contract(erc20ABI, currentPageToken);
-		// contract.methods.balanceOf(walletAddress).call(function (error, result) {
-		// 	contract.methods.decimals().call(function (error, d) {
-		// 		currentPageWalletBalance = result;
-		// 		result = (result / Math.pow(10, d)).toFixedSpecial(7);
-		// 		//console.log(error, result)
-		// 		$('.walletbalance').text(result);
-		// 	});
-		// });
+		let earned = await poolContract.earned(walletAddress).call();
+		earned = (earned / Math.pow(10, decimals)).toFixedSpecial(4);
+		$('.rewardbalance').text(earned);
 	}
 	triggercontract();
 
@@ -426,48 +400,32 @@ function approveSpend() {
 		await mm_tron.approve(pools[currentPagePoolID][0],pools[currentPagePoolID][2]);
 	}
 	trigger();
-
-
-	// var contract = new web3.eth.Contract(erc20ABI, currentPageToken);
-
-	// contract.methods
-	// 	.approve(
-	// 		chefAddress,
-	// 		'10000000000000000000000000000000000000000000000000000000'
-	// 	)
-	// 	.send({ from: walletAddress }, function (err, transactionHash) {
-	// 		//some code
-
-
-	// 		var subscription = web3.eth
-	// 			.subscribe('pendingTransactions', function (error, result) {
-	// 				if (!error) addToPool();
-	// 			})
-	// 			.on('data', function (transaction) {
-	// 				//console.log(transaction);
-	// 			});
-
-	// 		$('body').addClass('approved');
-	// 		// console.log(transactionHash);
-	// 	});
 }
 
-function addToPool() {
-	var contract = new web3.eth.Contract(chefABI, chefAddress);
+function stake() {
+	async function trigger(){
+		let poolContract = await window.tronWeb.contract().at(pools[id][2]);
+		let totalStake = await poolContract.stake().call();
+	}
+	trigger();
+
+	// var contract = new web3.eth.Contract(chefABI, chefAddress);
 	var amount = prompt(
 		'Amount to stake',
 		(currentPageWalletBalance - 1000000) / Math.pow(10, 18)
 	); // to fix round error due to JS
 
-	contract.methods
-		.deposit(
-			currentPagePoolID,
-			(amount * Math.pow(10, 18) - 100).toFixedSpecial(0)
-		)
-		.send({ from: walletAddress }, function (err, transactionHash) {
-			//console.log(transactionHash)
-		});
+	// contract.methods
+	// 	.deposit(
+	// 		currentPagePoolID,
+	// 		(amount * Math.pow(10, 18) - 100).toFixedSpecial(0)
+	// 	)
+	// 	.send({ from: walletAddress }, function (err, transactionHash) {
+	// 		//console.log(transactionHash)
+	// 	});
+
 }
+
 function claimReward() {
 	var contract = new web3.eth.Contract(chefABI, chefAddress);
 	contract.methods

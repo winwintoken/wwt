@@ -66,25 +66,6 @@
 		})(jQuery);
 
 	</script>
-
-<!-- 
-	<script>
-		const sc3 = document.createElement('script');
-		sc3.src = 'js/contract.js?rand=' + Math.random() * 9999;
-		sc3.async = true;
-		document.head.appendChild(sc3);
-
-		const sc2 = document.createElement('script');
-		sc2.src = 'js/tronutil.js?rand=' + Math.random() * 9999;
-		sc2.async = true;
-		document.head.appendChild(sc2);
-
-		const sc = document.createElement('script');
-		sc.src = 'js/main.js?rand=' + Math.random() * 9999;
-		sc.async = true;
-		document.head.appendChild(sc);
-
-	</script> -->
 </head>
 
 <style>
@@ -122,6 +103,10 @@
 		display: none;
 	}
 
+	.aboutp{
+		text-align: left;
+		font-size: 23px;
+	}
 	.home .swapcard {
 		height: 175px;
 	}
@@ -164,7 +149,7 @@
 
 	body {
 		/* background-image: linear-gradient(180deg, #712e2c, #bd3434); */
-		background-color: rgba(239, 231, 234, .5);
+		background-color: rgba(239, 231, 234, .2);
 	}
 
 	.card {
@@ -322,6 +307,9 @@
 			<h3 class="mt-2 cover-container" data-lang="string_info2">
 				Keep updating contract token.
 			</h3>
+			<h3 class="mt-2 cover-container" data-lang="string_info3">
+				Fork Sun's token and pool contract and Open sourced.
+			</h3>
 			<button onclick="uploadReword()" hidden>Upload Reward</button>
 			<button onclick="test()" hidden>Test </button>
 			<main role="main" class="inner cover pt-2 home mt-4">
@@ -369,17 +357,19 @@
 			</main>
 
 			<main role="main" class="inner cover about" STYLE="DISPLAY:NONE">
-				WWT将以YFI的形式进行分发：非预前开采，无创始人股份，无风投利益-借凭均等的股权分配，以吸引广泛且视野一致的社区来管理协议和代币的未来.
-				WWT开采期为2周，不同的池子开采时间不同。
-				总量2100枚，创世挖矿持续2周，总共挖出1200枚。剩余900枚在社区投票下，会采取分红、空投、开启其他矿池的形式进行分发。
+				<p class="aboutp" data-lang="about1">
+					WWT将以YFI的形式进行分发：非预前开采，无创始人股份，无风投的股权分配。
+				</p>
+				<p class="aboutp" data-lang="about2">
+					总量2100枚，创世挖矿持续2周，总共挖出1200枚。剩余900枚在社区投票下，会采取分红、空投、开启其他矿池的形式进行分发。
+				</p>
 				
-
-				<br>
-				关于团队：我们是以太坊上的开发团队，鉴于以太坊的手续费高昂且交易速度缓慢，我们的很多想法无法达到我们的期望，所以选择在波场上落地。
-				<br>
-				<br>
-				规划：WWT作为我们在波场上的初次落地项目，在挖矿到一周时，二期项目将落地，落实去中心化合约交易所 v0.1 版本，WWT将作为头矿进行挖矿，或者对WWT持有者进行空投。
-				<br>
+				<p class="aboutp" data-lang="about3">
+				关于团队：我们是以太坊上的开发团队，鉴于以太坊的手续费高昂且交易速度缓慢，开发的项目很多功能无法达到我们的期望，故选择在波场上落地。
+				</p>
+				<p class="aboutp" data-lang="about4">
+				规划：WWT作为我们在波场上的初次落地项目，在挖矿到一周时，二期项目将落地，落实去中心化合约交易所 v0.1 版本，WWT将作为头矿进行挖矿，并对WWT持有者进行空投。
+				</p>
 
 			</main>
 
@@ -592,11 +582,13 @@
 
 	<footer class="mastfoot footer">
 		<div class="inner">
-			<p><a href="https://tronscan.org"
+			<p><a href="https://tronscan.io/#/token20/TUHVUsg8hvR4TxmWAbfvKTKwGdrqArmYsv"
 					target="_blank" data-lang="tokencontract">Token Contract</a>
-				&mdash; <a href="https://tronscan.org"
+				&mdash; 
+				<a href="https://tronscan.io/#/token20/TUHVUsg8hvR4TxmWAbfvKTKwGdrqArmYsv"
 					target="_blank" data-lang="poolcontract">Pool Contract</a>
-				<br /><br /> <a href="https://twitter.com/money_burger" target="_blank">Twitter</a>
+				<br /><br /> 
+				<a href="https://twitter.com/money_burger" target="_blank">Twitter</a>
 				&mdash;
 				<a href="https://discord.gg/7tJmY7" target="_blank">Discord</a>
 				&mdash;

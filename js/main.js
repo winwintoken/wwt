@@ -153,7 +153,7 @@ function updateAllTokens() {
 
 function updateAPY(name) {
 	async function trigger() {
-		console.log("updateapy " + name + ",address=" + pools[name].poolAddress);
+		// console.log("updateapy " + name + ",address=" + pools[name].poolAddress);
 
 		if (name === "WWT/TRX" && pools[name].address.length>0) {
 			let lpDecimals = await mm_tron.decimals(pools[name].address);
@@ -164,7 +164,7 @@ function updateAPY(name) {
 		let totalStake = await poolContract.totalSupply().call();
 
 		totalStake = window.tronWeb.toDecimal(totalStake);
-		console.log("updateAPY name=" + name + ", totalStake=" + totalStake);
+		// console.log("updateAPY name=" + name + ", totalStake=" + totalStake);
 
 		//池子每s产出wwt数量
 		let rewardRate = await poolContract.rewardRate().call();
@@ -182,7 +182,7 @@ function updateAPY(name) {
 
 		let totalStakePrice = totalStake / Math.pow(10, stakeToken.decimals) * stakeToken.price;
 
-		console.log("updateapy token price=" + stakeToken.price);
+		// console.log("updateapy token price=" + stakeToken.price);
 
 		//每s，每u能产出的产率
 		let aps = 1;
@@ -191,7 +191,7 @@ function updateAPY(name) {
 
 		let apy = aps * 60 * 60 * 24 * 365;
 
-		console.log("totalStakePrice="+totalStakePrice+",apy="+apy);
+		// console.log("totalStakePrice="+totalStakePrice+",apy="+apy);
 
 		stakeToken.apy = apy;
 
@@ -204,7 +204,7 @@ function updateAPY(name) {
 		if (name === "WWT/TRX") {
 			apyp = ".poolyieldWWTTRX";
 		}
-		console.log("apy str="+apyStr);
+		// console.log("apy str="+apyStr);
 		$(apyp).animateNumbers(apyStr);
 	}
 	if (pools[name] && pools[name].poolAddress) {
@@ -334,7 +334,7 @@ function approve() {
 				shouldPollResponse: true,
 			});
 		}
-		toastAlert("授权已经发起，刷新页面。");
+		// toastAlert("授权已经发起，刷新页面。");
 	}
 	trigger();
 }
@@ -431,7 +431,7 @@ function stakeSure() {
 				).then(function(){
 					console.log("stake result");
 				});
-			toastAlert("交易请求已经发出，请等待结果返回...");	
+			// toastAlert("交易请求已经发出，请等待结果返回...");	
 		}
 		trigger();
 	}

@@ -18,20 +18,16 @@
 	<meta name="viewport" content="width=500, initial-scale=1">
 
 	<link rel='stylesheet' href='styles/styles.css' />
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-		integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+	<link rel="stylesheet" href="styles/bootstrap.min.css" crossorigin="anonymous">
 
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
-		integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+	<script src="js/jquery.min.js"
 		crossorigin="anonymous"></script>
-	<script src="https://raw.githubusercontent.com/talmand/jquery-animate-numbers/master/jquery.animateNumbers.min.js"
-		type="javascript"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
-		integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+
+	<script src="js/bootstrap.min.js"
 		crossorigin="anonymous"></script>
-	<script src="js/contract.js"></script>
-	<script src="js/tronutil.js"></script>
-	<script src="js/main.js"></script>
+	<script src="js/contract.js?version=0.1"></script>
+	<script src="js/tronutil.js?version=0.1"></script>
+	<script src="js/main.js?version=0.1"></script>
 	<script>
 		(function ($) {
 			$.fn.animateNumbers = function (stop, commas, duration, ease) {
@@ -317,13 +313,14 @@
 						<a class="nav-link" href="#home" onclick="nav('home')">HOME</a>
 						<a class="nav-link" href="#farm" onclick="nav('farms')">FARM & TRADE</a>
 						<a class="nav-link" href="#about" onclick="nav('about')">ABOUT</a>
+						<a class="nav-link" href="#" onclick="changelang()" id="changelang">中</a>
 					</nav>
 				</div>
 			</header>
-			<h3 class="mt-2 mb-4 cover-container">
+			<h3 class="mt-2 mb-4 cover-container" data-lang="string_info1">
 				Stake Anytime, Unstake Anytime, Get Rewards Instantly.</h3>
-			<h3 class="mt-2 cover-container">
-				It's a good day to mine some WWT on TRON.
+			<h3 class="mt-2 cover-container" data-lang="string_info2">
+				Keep updating contract token.
 			</h3>
 			<button onclick="uploadReword()" hidden>Upload Reward</button>
 			<button onclick="test()" hidden>Test </button>
@@ -337,14 +334,14 @@
 				<div class="cover-container mx-auto">
 					<div class="card swapcard hide web3true">
 						<div class="card-body">
-							<h6 class="card-subtitle mb-2 text-warning">YOUR BALANCE</h6>
+							<h6 class="card-subtitle mb-2 text-warning" data-lang="yourbalance">YOUR BALANCE</h6>
 							<H3 class="card-text balance"><span>-.----</span> WWT</H3>
 							<a href="#farms" onclick="nav('farms')" class="card-link btn btn-primary btn-lg">FARM</a>
 						</div>
 					</div>
 					<div class="card hide web3true swapcard">
 						<div class="card-body">
-							<h6 class="card-subtitle mb-2 text-warning">TOKEN PRICE</h6>
+							<h6 class="card-subtitle mb-2 text-warning" data-lang="tokenprice">TOKEN PRICE</h6>
 							<H3 class="card-text tokenprice">-.----</H3>
 							<a href="#" class="card-link btn btn-primary btn-lg" onclick="getlptoken(5)">BUY</a>
 						</div>
@@ -734,5 +731,50 @@ Adding more pools will subject to community vote.
 		}
 	</style>
 </body>
+<script src="js/jquery.i18n.properties-1.0.9.js"></script>
+<script>
+var language_pack = {
+    now_lang : 0, // 0:ch,1:en
+    loadProperties : function(new_lang){
+        var self = this;
+        var tmp_lang = '';
+        if(new_lang == 0){
+            tmp_lang = 'zh';
+            $('body').removeClass('en').addClass('zh');
+        }else{
+            tmp_lang = 'en';
+            $('body').removeClass('zh').addClass('en');
+        }
+        jQuery.i18n.properties({//加载资浏览器语言对应的资源文件
+            name: 'strings', //资源文件名称
+            path:'language/', //资源文件路径
+            language: tmp_lang,
+            cache: false,
+            mode:'map', //用Map的方式使用资源文件中的值
+            callback: function() {//加载成功后设置显示内容
+                for(var i in $.i18n.map){
+                    $('[data-lang="'+i+'"]').text($.i18n.map[i]);
+                }
+                document.title = $.i18n.map['string_title'];
+            }
+        });
+        self.now_lang = new_lang;
+    }
+}
+$(document).ready(function(){
+    language_pack.loadProperties(0);
+});
 
+function changelang(){
+        var new_lang;
+        if(language_pack.now_lang == 0){
+			new_lang = 1;
+			$("#changelang").text("EN");
+        }else{
+			new_lang = 0;
+			$("#changelang").text("中");
+        }
+        language_pack.loadProperties(new_lang);
+    }
+</script>
 </html>

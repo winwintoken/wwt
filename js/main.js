@@ -68,7 +68,6 @@ function calRealPrice() {
 			var token = pools[name];
 			token.price = token.price / usdt.price;
 			if (name == "WWT") {
-				token.price = 300;
 				$('.tokenprice').text('$' + parseFloat(token.price).toFixed(4));
 			}
 			if (name == "WWT/TRX") {

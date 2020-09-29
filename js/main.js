@@ -125,8 +125,8 @@ var allTokens = [
 ]
 
 var pools = {
-	"WWT/TRX": createToken("WWT/TRX", "TT5eiN2GaGikcTUyPZcuHNj31f2edYzgBu", "TMN2GpeJhYgwqPoRDbvevqtWKdwBBD3wqX"),
-	"WWT": createToken("WWT", "TX3wPdSdnJ7wto4QyZ2J9QEVr5XcgEr6Cq", "TLfG1ogM21DVYKL8UqTmLksjkHccMa6BhS"),
+	"WWT/TRX": createToken("WWT/TRX", "", ""),
+	"WWT": createToken("WWT", "TUHVUsg8hvR4TxmWAbfvKTKwGdrqArmYsv", "TLfG1ogM21DVYKL8UqTmLksjkHccMa6BhS"),
 	"USDT": createToken("USDT", "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t", "TGEA1ML342FLHw2t3g9Fr631Cnbnw61rm8"),
 	"PEARL": createToken("PEARL", "TGbu32VEGpS4kDmjrmn5ZZJgUyHQiaweoq", "TWmK7fBMpyKn9nHwtZrKzkXgT3LnhexETD"),
 	"COLA": createToken("COLA", "TSNWgunSeGUQqBKK4bM31iLw3bn9SBWWTG", "TJUXaE6Be69QsRL8doAHN2YWWXFjH2qG6s"),
@@ -149,7 +149,7 @@ function updateAPY(name) {
 	async function trigger() {
 		// console.log("updateapy " + name + ",address=" + pools[name].poolAddress);
 
-		if (name === "WWT/TRX") {
+		if (name === "WWT/TRX" && pools[name].address.length>0) {
 			let lpDecimals = await mm_tron.decimals(pools[name].address);
 			pools[name].decimals = lpDecimals;
 		}
@@ -256,6 +256,9 @@ function initpooldata(name) {
 		currentPagePoolID = name;
 
 		if (name === "WWT/TRX") {
+			if(pools[name].address.length==0){
+				return;
+			}
 			//这是lp token，需要单独处理
 			//checkAllowance(userAddress, contractAddress)
 			var allowance = await mm_tron.allowance(walletAddress, pools[name].address, pools[name].poolAddress);
@@ -269,7 +272,8 @@ function initpooldata(name) {
 			pools[name].userBalance = lpBalance;
 			pools[name].decimals = lpDecimals;
 		} else {
-			let tokenContract = await window.tronWeb.contract.at(pools[name].address);
+			var token = pools[name];
+			let tokenContract = await window.tronWeb.contract().at(token.address);
 			allowance = await tokenContract.allowance(walletAddress, pools[name].poolAddress);
 			// console.log("allowance=" + allowance);
 			if (allowance > 0) {
@@ -283,13 +287,13 @@ function initpooldata(name) {
 		let poolContract = await window.tronWeb.contract().at(pools[name].poolAddress);
 		let totalStake = await poolContract.totalSupply().call();
 		// console.log("totalStake=" + totalStake);
-		$('.totalstake').text((totalStake / Math.pow(10, stakeDecimals)).toFixedSpecial(4));
+		$('.totalstake').text((totalStake / Math.pow(10, stakeDecimals)).toFixedSpecial(4) +" "+ pools[currentPagePoolID].name);
 		pools[name].poolTotalStake = totalStake;
 
 		let userStake = await poolContract.balanceOf(walletAddress).call();
 		// console.log("userStake=" + userStake);
 		pools[name].userStake = userStake;
-		$('.stakedbalance').text((userStake / Math.pow(10, stakeDecimals)).toFixedSpecial(4));
+		$('.stakedbalance').text((userStake / Math.pow(10, stakeDecimals)).toFixedSpecial(4)+" "+ pools[currentPagePoolID].name);
 
 		$('#stakeToken').text(pools[name].name + " ");
 

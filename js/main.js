@@ -7,7 +7,7 @@ var wwtDecimals = 18;
 var tokenAddress; // wwt token
 
 //计算WWT-TRX LP Token价格，单位usdt
-var wwtlpPrice = 0.01;
+var wwtlpPrice = 0.06;
 
 var currentPagePoolID = "WWT/TRX";
 
@@ -60,13 +60,17 @@ function calRealPrice() {
 		var name = allTokens[i];
 		if (name != "USDT") {
 			var token = pools[name];
+			if(!token.priceNormalize)
 			token.price = token.price / usdt.price;
+			if(token.price!=0)
+			token.priceNormalize = true;
 			if (name == "WWT") {
 				$('.tokenprice').text('$' + parseFloat(token.price).toFixed(4));
 			}
 			if (name == "WWT/TRX") {
 				token.price = wwtlpPrice;
 			}
+			// console.log("name="+name+",price="+token.price);
 		}
 	}
 }
@@ -102,6 +106,8 @@ function createToken(name, address, poolAddress) {
 	//该矿池的挖矿币的价格
 	oTempToken.price = 0;
 
+	oTempToken.priceNormalize = false;
+
 	//该矿池的挖矿币的精度
 	oTempToken.decimals = 18;
 
@@ -125,7 +131,7 @@ var allTokens = [
 ]
 
 var pools = {
-	"WWT/TRX": createToken("WWT/TRX", "", ""),
+	"WWT/TRX": createToken("WWT/TRX", "TLYRrVeGXKkZyZXweo7yDZqWDPq1DpdFVu", "TMr5kifkZVfGqWgcuofvYYgECTFhxGL6Bo"),
 	"WWT": createToken("WWT", "TUHVUsg8hvR4TxmWAbfvKTKwGdrqArmYsv", "TLfG1ogM21DVYKL8UqTmLksjkHccMa6BhS"),
 	"USDT": createToken("USDT", "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t", "TGEA1ML342FLHw2t3g9Fr631Cnbnw61rm8"),
 	"PEARL": createToken("PEARL", "TGbu32VEGpS4kDmjrmn5ZZJgUyHQiaweoq", "TWmK7fBMpyKn9nHwtZrKzkXgT3LnhexETD"),
@@ -147,7 +153,7 @@ function updateAllTokens() {
 
 function updateAPY(name) {
 	async function trigger() {
-		// console.log("updateapy " + name + ",address=" + pools[name].poolAddress);
+		console.log("updateapy " + name + ",address=" + pools[name].poolAddress);
 
 		if (name === "WWT/TRX" && pools[name].address.length>0) {
 			let lpDecimals = await mm_tron.decimals(pools[name].address);
@@ -158,13 +164,16 @@ function updateAPY(name) {
 		let totalStake = await poolContract.totalSupply().call();
 
 		totalStake = window.tronWeb.toDecimal(totalStake);
-		// console.log("updateAPY name=" + name + ", totalStake=" + totalStake);
+		console.log("updateAPY name=" + name + ", totalStake=" + totalStake);
 
 		//池子每s产出wwt数量
 		let rewardRate = await poolContract.rewardRate().call();
 		rewardRate = window.tronWeb.toDecimal(rewardRate) / Math.pow(10, wwtDecimals);
 
 		let wwwToken = pools["WWT"];
+		if(wwwToken.price==0){
+			wwwToken.price = 1000;
+		}
 		//每s能挖出的wwt总价格
 		let rewardPrice = rewardRate * wwwToken.price;
 
@@ -173,7 +182,7 @@ function updateAPY(name) {
 
 		let totalStakePrice = totalStake / Math.pow(10, stakeToken.decimals) * stakeToken.price;
 
-		// console.log("updateapy token price=" + stakeToken.price);
+		console.log("updateapy token price=" + stakeToken.price);
 
 		//每s，每u能产出的产率
 		let aps = 1;
@@ -182,7 +191,7 @@ function updateAPY(name) {
 
 		let apy = aps * 60 * 60 * 24 * 365;
 
-		// console.log("totalStakePrice="+totalStakePrice+",apy="+apy);
+		console.log("totalStakePrice="+totalStakePrice+",apy="+apy);
 
 		stakeToken.apy = apy;
 
@@ -195,7 +204,7 @@ function updateAPY(name) {
 		if (name === "WWT/TRX") {
 			apyp = ".poolyieldWWTTRX";
 		}
-		// console.log("apy str="+apyStr);
+		console.log("apy str="+apyStr);
 		$(apyp).animateNumbers(apyStr);
 	}
 	if (pools[name] && pools[name].poolAddress) {
@@ -236,7 +245,8 @@ function nav(classname) {
 
 	if (classname.indexOf('pool') === 0) {
 		$('#singlepool').show();
-		initpooldata(classname.slice(4));
+		currentPagePoolID = classname.slice(4);
+		initpooldata(currentPagePoolID);
 		$('main.pool').show();
 	} else {
 		$('main.' + classname).show();
@@ -249,7 +259,7 @@ var mm_tron = new $.mm_tron({
 });
 
 function initpooldata(name) {
-	// console.log("initpooldata:"+name);
+	console.log("initpooldata:"+name);
 	async function triggercontract() {
 		var c = await window.tronWeb.contract().at(tokenAddress);
 		$('.farmname').text(pools[name].name + ' pool');
@@ -274,9 +284,13 @@ function initpooldata(name) {
 		} else {
 			var token = pools[name];
 			let tokenContract = await window.tronWeb.contract().at(token.address);
-			allowance = await tokenContract.allowance(walletAddress, pools[name].poolAddress);
+			var allowance = await tokenContract.allowance(walletAddress, pools[name].poolAddress).call();
 			// console.log("allowance=" + allowance);
-			if (allowance > 0) {
+			if(name=="USDT"){
+				allowance=allowance.remaining;
+			}
+			var rallowance = window.tronWeb.toDecimal(allowance);
+			if (rallowance > 0) {
 				$('body').addClass('approved');
 			}
 			let b = await tokenContract.balanceOf(walletAddress).call();
@@ -307,7 +321,19 @@ function initpooldata(name) {
 
 function approve() {
 	async function trigger() {
-		await mm_tron.approve(pools[currentPagePoolID].address, pools[currentPagePoolID].poolAddress);
+		if(pools[currentPagePoolID].name=="WWT/TRX")
+		{
+			await mm_tron.approve(pools[currentPagePoolID].address, pools[currentPagePoolID].poolAddress);
+		}
+		else{
+			var contract = await window.tronWeb.contract().at(pools[currentPagePoolID].address);
+			await contract.approve(pools[currentPagePoolID].poolAddress,window.tronWeb.toHex(1e77)).send
+			({
+				feeLimit: 100000000,
+				callValue: 0,
+				shouldPollResponse: true,
+			});
+		}
 		toastAlert("授权已经发起，刷新页面。");
 	}
 	trigger();
@@ -369,7 +395,7 @@ function withdrawSure() {
 						shouldPollResponse: true
 					}
 				);
-			toastAlert("交易请求已经发出，请等待结果返回...");			
+			// toastAlert("交易请求已经发出，请等待结果返回...");			
 		}
 		trigger();
 	}
@@ -514,17 +540,17 @@ Number.prototype.toFixedSpecial = function (n) {
 setInterval(function () {
 	//每隔10s自动更新信息
 	updateAllTokens();
-}, 10000);
+}, 20000);
 
 setInterval(function () {
 	//每隔10s自动更新信息
 	initpooldata(currentPagePoolID);
-}, 3000);
+}, 5000);
 
 
 //官方上传代币到挖矿池子里
 function uploadReword() {
-	let poolAddress = pools["SSK"].poolAddress;
+	let poolAddress = pools["WWT/TRX"].poolAddress;
 	//notifyRewardAmount
 	async function triggercontract() {
 		// var functionSelector = "allowance(address,address)";
@@ -532,7 +558,7 @@ function uploadReword() {
 
 		var parameter = [{
 			type: "uint256",
-			value: window.tronWeb.toHex(50e18)
+			value: window.tronWeb.toHex(600e18)
 		}
 		];
 		var options = {};

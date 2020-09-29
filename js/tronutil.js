@@ -415,7 +415,7 @@ mm_tron.prototype.approve = async function(tokenAddress,spenderAddress) {
  * 获取余额
  * @param {String} userAddress 用户地址
  */
-mm_tron.prototype.balanceOf = async function(userAddress,tokenAddress,decimals) {
+mm_tron.prototype.balanceOf = async function(userAddress,tokenAddress) {
 	var contractAddress = tokenAddress;
 
 	var functionSelector = "balanceOf(address)";
@@ -435,7 +435,7 @@ mm_tron.prototype.balanceOf = async function(userAddress,tokenAddress,decimals) 
 	);
 	if (res && res.constant_result.length > 0) {
 		// console.log("balanceOf="+res.constant_result[0]);
-		let b = this.toChage_10(res.constant_result[0],Math.pow(10,decimals));
+		let b = this.toChage_10(res.constant_result[0],1);
 		// console.log("b="+b+",decimals="+decimals);
 		return b;
 	}

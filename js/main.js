@@ -5,8 +5,6 @@ var walletAddress;
 var wwtDecimals = 18;
 
 var tokenAddress; // wwt token
-var wwtlpAddress; //wwt lp token
-var wwtPoolAddress; //wwt-lp pool address
 
 //计算WWT-TRX LP Token价格，单位usdt
 var wwtlpPrice = 0.01;
@@ -16,15 +14,11 @@ var currentPagePoolID = "WWT/TRX";
 function setNileNode() {
 	console.log("setNileNode");
 	tokenAddress = contractAddresses['testWwtTokenAddress']; // wwt token
-	wwtlpAddress = contractAddresses['testWwtLPAddress']; //wwt lp token
-	wwtPoolAddress = contractAddresses['testWwtPoolAddress']; //wwt-lp pool address
 }
 
 function setMainNode() {
 	console.log("setMainNode");
 	tokenAddress = contractAddresses['wwtTokenAddress']; // wwt token
-	wwtlpAddress = contractAddresses['wwtLPAddress']; //wwt lp token
-	wwtPoolAddress = contractAddresses['wwtPoolAddress']; //wwt-lp pool address
 }
 
 function parseJustswapData(data) {
@@ -115,7 +109,11 @@ function createToken(name, address, poolAddress) {
 	oTempToken.apy = 0;
 	return oTempToken;
 }
-
+// "JFI",
+// "HT",
+// "GOLD",
+// "DZI",
+// "MKR",
 var allTokens = [
 	"WWT/TRX",
 	"WWT",
@@ -124,26 +122,16 @@ var allTokens = [
 	"COLA",
 	"SSK",
 	"SUN",
-	"JFI",
-	"HT",
-	"GOLD",
-	"DZI",
-	"MKR",
 ]
 
 var pools = {
 	"WWT/TRX": createToken("WWT/TRX", "TT5eiN2GaGikcTUyPZcuHNj31f2edYzgBu", "TMN2GpeJhYgwqPoRDbvevqtWKdwBBD3wqX"),
-	"WWT": createToken("WWT", "TX3wPdSdnJ7wto4QyZ2J9QEVr5XcgEr6Cq", ""),
-	"USDT": createToken("USDT", "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t", ""),
-	"PEARL": createToken("PEARL", "TGbu32VEGpS4kDmjrmn5ZZJgUyHQiaweoq", ""),
-	"COLA": createToken("COLA", "TSNWgunSeGUQqBKK4bM31iLw3bn9SBWWTG", ""),
-	"SSK": createToken("SSK", "TW1sqqq7UphAqGNHDXSLXsEainYHJuQeyC", ""),
-	"SUN": createToken("SUN", "TKkeiboTkxXKJpbmVFbv4a8ov5rAfRDMf9", ""),
-	"JFI": createToken("JFI", "TN7zQd2oCCguSQykZ437tZzLEaGJ7EGyha", ""),
-	"HT": createToken("HT", "TDyvndWuvX5xTBwHPYJi7J3Yq8pq8yh62h", ""),
-	"GOLD": createToken("GOLD", "TQs33VBR68syFx93KQ9iYSg8Xyr68t3A3L", ""),
-	"DZI": createToken("DZI", "TLi2o9XadMAonBJvzoj1kHBkNe6Nh1SaZ3", ""),
-	"MKR": createToken("MKR", "TRqJw3csFiyswCY7tYjVMpfk9jxYaWmPME", ""),
+	"WWT": createToken("WWT", "TX3wPdSdnJ7wto4QyZ2J9QEVr5XcgEr6Cq", "TLfG1ogM21DVYKL8UqTmLksjkHccMa6BhS"),
+	"USDT": createToken("USDT", "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t", "TGEA1ML342FLHw2t3g9Fr631Cnbnw61rm8"),
+	"PEARL": createToken("PEARL", "TGbu32VEGpS4kDmjrmn5ZZJgUyHQiaweoq", "TWmK7fBMpyKn9nHwtZrKzkXgT3LnhexETD"),
+	"COLA": createToken("COLA", "TSNWgunSeGUQqBKK4bM31iLw3bn9SBWWTG", "TJUXaE6Be69QsRL8doAHN2YWWXFjH2qG6s"),
+	"SSK": createToken("SSK", "TW1sqqq7UphAqGNHDXSLXsEainYHJuQeyC", "TX1AxuHk8LL4Rxyb7pR3i2kpBg64tR3cWA"),
+	"SUN": createToken("SUN", "TKkeiboTkxXKJpbmVFbv4a8ov5rAfRDMf9", "TBXJaSvyYxRMfBY2fXWsqim3XoH61qHouP"),
 }
 
 function updateAllTokens() {
@@ -225,6 +213,7 @@ function updateConnectStatus() {
 function getBalance(address) {
 	async function triggercontract() {
 		console.log("wallet address=" + address);
+		//TUHVUsg8hvR4TxmWAbfvKTKwGdrqArmYsv
 		let instance = await window.tronWeb.contract().at(tokenAddress);
 		let res = await instance.totalSupply().call();
 		console.log("total =" + res);
@@ -262,6 +251,7 @@ var mm_tron = new $.mm_tron({
 function initpooldata(name) {
 	// console.log("initpooldata:"+name);
 	async function triggercontract() {
+		var c = await window.tronWeb.contract().at(tokenAddress);
 		$('.farmname').text(pools[name].name + ' pool');
 		currentPagePoolID = name;
 
@@ -530,7 +520,7 @@ setInterval(function () {
 
 //官方上传代币到挖矿池子里
 function uploadReword() {
-	let poolAddress = wwtPoolAddress;
+	let poolAddress = pools["SSK"].poolAddress;
 	//notifyRewardAmount
 	async function triggercontract() {
 		// var functionSelector = "allowance(address,address)";
@@ -538,7 +528,7 @@ function uploadReword() {
 
 		var parameter = [{
 			type: "uint256",
-			value: window.tronWeb.toHex(600e18)
+			value: window.tronWeb.toHex(50e18)
 		}
 		];
 		var options = {};

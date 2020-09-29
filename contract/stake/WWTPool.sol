@@ -53,8 +53,8 @@ contract LPTokenWrapper {
     }
 }
 
-contract WWTRXPool is LPTokenWrapper, IRewardDistributionRecipient {
-    // wwtToken
+contract WWTPool is LPTokenWrapper, IRewardDistributionRecipient {
+    // wwtToken,"41c8e782045cf996e8af0708323c416fff1313b8a6"
     ITRC20 public wwtToken = ITRC20(0x41c8e782045cf996e8af0708323c416fff1313b8a6);
     uint256 public DURATION = 1_209_600; // 14 days
 

@@ -12,17 +12,6 @@ var wwtPoolAddress; //wwt-lp pool address
 var wwtlpPrice = 0.01;
 
 var currentPagePoolID = "WWT/TRX";
-var currentPageWalletBalance = 0;
-var currentPageStaked = 0;
-var currentPageReward = 0;
-
-
-const trx_address = "T9ycGdsTDc9hAVobuNauvZAd14dt9LVyee";
-const usdt_address = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
-const pearl_address = "TGbu32VEGpS4kDmjrmn5ZZJgUyHQiaweoq";
-const jfi_address = "TN7zQd2oCCguSQykZ437tZzLEaGJ7EGyha";
-const wwt_address = "xx";
-
 
 function setNileNode() {
 	console.log("setNileNode");
@@ -51,7 +40,7 @@ function parseJustswapData(data) {
 		if (info) {
 			token.price = info.price;
 			token.decimals = info.base_decimal;
-			console.log("name=" + name + ",price=" + info.price);
+			// console.log("name=" + name + ",price=" + info.price);
 		}
 	}
 }
@@ -78,11 +67,10 @@ function calRealPrice() {
 		if (name != "USDT") {
 			var token = pools[name];
 			token.price = token.price / usdt.price;
-			if (name == "WWT")
-				{
-					token.price = 300;
-					$('.tokenprice').text('$' + parseFloat(token.price).toFixed(4));
-				}
+			if (name == "WWT") {
+				token.price = 300;
+				$('.tokenprice').text('$' + parseFloat(token.price).toFixed(4));
+			}
 			if (name == "WWT/TRX") {
 				token.price = wwtlpPrice;
 			}
@@ -159,9 +147,6 @@ var pools = {
 	"MKR": createToken("MKR", "TRqJw3csFiyswCY7tYjVMpfk9jxYaWmPME", ""),
 }
 
-var loadedpools = 0;
-var totalPoolWeight = 14; // sum of weight
-
 function updateAllTokens() {
 	var usdt = pools["USDT"];
 	if (usdt.price == 0) {
@@ -175,33 +160,33 @@ function updateAllTokens() {
 
 function updateAPY(name) {
 	async function trigger() {
-		console.log("updateapy " + name + ",address=" + pools[name].poolAddress);
+		// console.log("updateapy " + name + ",address=" + pools[name].poolAddress);
 
-		if(name==="WWT/TRX"){
+		if (name === "WWT/TRX") {
 			let lpDecimals = await mm_tron.decimals(pools[name].address);
 			pools[name].decimals = lpDecimals;
 		}
 
 		let poolContract = await window.tronWeb.contract().at(pools[name].poolAddress);
 		let totalStake = await poolContract.totalSupply().call();
-		
+
 		totalStake = window.tronWeb.toDecimal(totalStake);
-		console.log("updateAPY name=" + name + ", totalStake=" + totalStake);
+		// console.log("updateAPY name=" + name + ", totalStake=" + totalStake);
 
 		//池子每s产出wwt数量
 		let rewardRate = await poolContract.rewardRate().call();
-		rewardRate = window.tronWeb.toDecimal(rewardRate) / Math.pow(10,wwtDecimals);
+		rewardRate = window.tronWeb.toDecimal(rewardRate) / Math.pow(10, wwtDecimals);
 
 		let wwwToken = pools["WWT"];
 		//每s能挖出的wwt总价格
-		let rewardPrice = rewardRate  * wwwToken.price;
+		let rewardPrice = rewardRate * wwwToken.price;
 
 		//用来质押的代币
 		let stakeToken = pools[name];
 
 		let totalStakePrice = totalStake / Math.pow(10, stakeToken.decimals) * stakeToken.price;
 
-		console.log("updateapy token price="+stakeToken.price)
+		// console.log("updateapy token price=" + stakeToken.price);
 
 		//每s，每u能产出的产率
 		let aps = 1;
@@ -210,14 +195,21 @@ function updateAPY(name) {
 
 		let apy = aps * 60 * 60 * 24 * 365;
 
+		// console.log("totalStakePrice="+totalStakePrice+",apy="+apy);
+
 		stakeToken.apy = apy;
+
+		var apyStr = parseInt(apy) * 100 + ' %';
+		if (totalStakePrice == 0){
+			apyStr = "Infinity %";
+		}
 
 		var apyp = ".poolyield" + name;
 		if (name === "WWT/TRX") {
 			apyp = ".poolyieldWWTTRX";
 		}
-
-			$(apyp).animateNumbers(parseInt(apy) * 100 + ' %');
+		console.log("apy str="+apyStr);
+		$(apyp).animateNumbers(apyStr);
 	}
 	if (pools[name] && pools[name].poolAddress) {
 		trigger();
@@ -231,20 +223,8 @@ function updateConnectStatus() {
 	getBalance(walletAddress);
 }
 
-function getSupply() {
-	var contract = new web3.eth.Contract(tokenABI, tokenAddress);
-	contract.methods.totalSupply().call(function (error, result) {
-		result = result / Math.pow(10, 18);
-
-		//console.log(error, result)
-		$('.supply span').animateNumbers(parseInt(result));
-		$('.mcap span').animateNumbers(parseInt(result * prices['burgerusd']));
-	});
-}
-
 function getBalance(address) {
 	async function triggercontract() {
-		console.log("tokenAddress=" + tokenAddress);
 		console.log("wallet address=" + address);
 		let instance = await window.tronWeb.contract().at(tokenAddress);
 		let res = await instance.totalSupply().call();
@@ -272,16 +252,15 @@ function nav(classname) {
 		$('main.pool').show();
 	} else {
 		$('main.' + classname).show();
+		updateAllTokens();
 	}
 }
 var mm_tron = new $.mm_tron({
-	// OK
 	contract_address: "",
 	precision: 100000000000000000
 });
 
 function initpooldata(name) {
-	console.log("initpooldata:" + name);
 	async function triggercontract() {
 		$('.farmname').text(pools[name].name + ' pool');
 		currentPagePoolID = name;
@@ -290,12 +269,12 @@ function initpooldata(name) {
 			//这是lp token，需要单独处理
 			//checkAllowance(userAddress, contractAddress)
 			var allowance = await mm_tron.allowance(walletAddress, pools[name].address, pools[name].poolAddress);
-			console.log("allowance=" + allowance);
+			// console.log("allowance=" + allowance);
 			if (allowance > 0) {
 				$('body').addClass('approved');
 			}
 			let lpDecimals = await mm_tron.decimals(pools[name].address);
-			console.log("lpDecimals="+lpDecimals);
+			// console.log("lpDecimals=" + lpDecimals);
 			let lpBalance = await mm_tron.balanceOf(walletAddress, pools[name].address);
 			pools[name].userBalance = lpBalance;
 			pools[name].decimals = lpDecimals;
@@ -313,12 +292,12 @@ function initpooldata(name) {
 		var stakeDecimals = pools[name].decimals;
 		let poolContract = await window.tronWeb.contract().at(pools[name].poolAddress);
 		let totalStake = await poolContract.totalSupply().call();
-		console.log("totalStake=" + totalStake);
+		// console.log("totalStake=" + totalStake);
 		$('.totalstake').text((totalStake / Math.pow(10, stakeDecimals)).toFixedSpecial(4));
 		pools[name].poolTotalStake = totalStake;
 
 		let userStake = await poolContract.balanceOf(walletAddress).call();
-		console.log("userStake=" + userStake);
+		// console.log("userStake=" + userStake);
 		pools[name].userStake = userStake;
 		$('.stakedbalance').text((userStake / Math.pow(10, stakeDecimals)).toFixedSpecial(4));
 
@@ -332,7 +311,7 @@ function initpooldata(name) {
 	triggercontract();
 }
 
-function approveSpend() {
+function approve() {
 	async function trigger() {
 		await mm_tron.approve(pools[currentPagePoolID].address, pools[currentPagePoolID].poolAddress);
 	}
@@ -341,7 +320,7 @@ function approveSpend() {
 
 function stake() {
 	document.getElementById("popTitle").innerHTML = "Stake";
-	var userBalance = (pools[currentPagePoolID].userBalance/Math.pow(10,pools[currentPagePoolID].decimals)).toFixed(4);
+	var userBalance = (pools[currentPagePoolID].userBalance / Math.pow(10, pools[currentPagePoolID].decimals)).toFixed(4);
 	$('#maxAvaliable').text(userBalance);
 	document.getElementById('stakeInput').value = 0;
 	$("#withdrawdiv").hide();
@@ -351,7 +330,7 @@ function stake() {
 
 function withdraw() {
 	document.getElementById("popTitle").innerHTML = "Withdraw";
-	var max = (pools[currentPagePoolID].userStake/Math.pow(10,pools[currentPagePoolID].decimals)).toFixed(4);
+	var max = (pools[currentPagePoolID].userStake / Math.pow(10, pools[currentPagePoolID].decimals)).toFixed(4);
 	$('#maxAvaliable').text(max);
 	document.getElementById('stakeInput').value = 0;
 	$("#withdrawdiv").show();
@@ -364,21 +343,21 @@ function withdrawSure() {
 	hideAlert();
 	var token = pools[currentPagePoolID];
 	if (token && token.poolAddress) {
-		async function trigger(){
+		async function trigger() {
 			var contract = await window.tronWeb.contract().at(token.poolAddress);
 			var stake = parseFloat(document.getElementById('stakeInput').value);
-	
+
 			contract.Withdrawn().watch((err, eventResult) => {
 				if (err) {
 					return console.error('Error with Withdraw:', err);
 				}
-				if (eventResult) { 
-					console.log('eventResult:',eventResult);
+				if (eventResult) {
+					// console.log('eventResult:', eventResult);
 					alert("Withdraw success!");
 					initpooldata(currentPagePoolID);
 				}
-			  });
-			  
+			});
+
 			contract.withdraw(window.tronWeb.toHex(stake * Math.pow(10, token.decimals)))
 				.send(
 					{
@@ -397,21 +376,21 @@ function stakeSure() {
 	hideAlert();
 	var token = pools[currentPagePoolID];
 	if (token && token.poolAddress) {
-		async function trigger(){
+		async function trigger() {
 			var contract = await window.tronWeb.contract().at(token.poolAddress);
 			var stake = parseFloat(document.getElementById('stakeInput').value);
-	
+
 			contract.Staked().watch((err, eventResult) => {
 				if (err) {
 					return console.error('Error with stake:', err);
 				}
-				if (eventResult) { 
-					console.log('eventResult:',eventResult);
+				if (eventResult) {
+					// console.log('eventResult:', eventResult);
 					alert("Stake success!");
 					initpooldata(currentPagePoolID);
 				}
-			  });
-			  
+			});
+
 			contract.stake(window.tronWeb.toHex(stake * Math.pow(10, token.decimals)))
 				.send(
 					{
@@ -428,7 +407,7 @@ function stakeSure() {
 
 function maxStake() {
 	var max = $('#maxAvaliable').text();
-	console.log("maxStake=" + max);
+	// console.log("maxStake=" + max);
 	document.getElementById('stakeInput').value = max
 }
 
@@ -445,19 +424,19 @@ function hideAlert() {
 function claimReward() {
 	var token = pools[currentPagePoolID];
 	if (token && token.poolAddress) {
-		async function trigger(){
+		async function trigger() {
 			var contract = await window.tronWeb.contract().at(token.poolAddress);
 			contract.RewardPaid().watch((err, eventResult) => {
 				if (err) {
 					return console.error('Error with stake:', err);
 				}
-				if (eventResult) { 
-					console.log('eventResult:',eventResult);
+				if (eventResult) {
+					// console.log('eventResult:', eventResult);
 					alert("Stake success!");
 					initpooldata(currentPagePoolID);
 				}
-			  });
-			  
+			});
+
 			contract.getReward()
 				.send(
 					{
@@ -470,43 +449,6 @@ function claimReward() {
 		trigger();
 	}
 
-}
-function removeFromPool() {
-	var contract = new web3.eth.Contract(chefABI, chefAddress);
-	var amount = prompt(
-		'Amount to withdraw',
-		(currentPageStaked - 1000000) / 10 ** 18
-	); // to fix round error due to JS
-	contract.methods
-		.withdraw(
-			currentPagePoolID,
-			(amount * Math.pow(10, 18)).toFixedSpecial(0)
-		)
-		.send({ from: walletAddress }, function (err, transactionHash) {
-			//some code
-			//console.log(transactionHash)
-		});
-}
-
-function loadedPool() {
-	loadedpools++;
-
-	if (loadedpools > 4) {
-		var tvl = 0;
-		for (var i = 0; i < pools.length; i++) {
-			tvl = tvl + pools[i][5];
-		}
-
-		var realtvl = 0;
-		for (var i = 0; i < pools.length; i++) {
-			if (i != 2 && i != 3) {
-				realtvl = realtvl + pools[i][5];
-			}
-		}
-
-		$('.tvl span').animateNumbers(parseInt(tvl));
-		console.warn('tvl:' + tvl);
-	}
 }
 
 function updatePrice(p) {
@@ -523,13 +465,13 @@ function getlptoken(id) {
 }
 
 var timer = setInterval(() => {
-	console.log("address start")
+	// console.log("address start")
 	gettronweb();
 }, 1000);
 
 function gettronweb() {
 	if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
-		console.log("address Yes:" + window.tronWeb.defaultAddress.base58)
+		// console.log("address Yes:" + window.tronWeb.defaultAddress.base58)
 		walletAddress = window.tronWeb.defaultAddress.base58;
 		clearInterval(timer);
 		walletConnect = true;
@@ -586,14 +528,9 @@ setInterval(function () {
 }, 3000);
 
 
-
-setTimeout(function () {
-	//启动后2s更新信息
-	updateAllTokens();
-}, 2000);
-
-
+//官方上传代币到挖矿池子里
 function uploadReword() {
+	let poolAddress = wwtPoolAddress;
 	//notifyRewardAmount
 	async function triggercontract() {
 		// var functionSelector = "allowance(address,address)";
@@ -606,7 +543,7 @@ function uploadReword() {
 		];
 		var options = {};
 		let tx = await tronWeb.transactionBuilder.triggerSmartContract(
-			wwtPoolAddress,
+			poolAddress,
 			functionSelector,
 			options,
 			parameter

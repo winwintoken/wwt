@@ -17,11 +17,6 @@ var currentPageWalletBalance = 0;
 var currentPageStaked = 0;
 var currentPageReward = 0;
 
-var mm_tron = new $.mm_tron({
-	// OK
-	contract_address: "",
-	precision: 100000000000000000
-});
 
 const trx_address = "T9ycGdsTDc9hAVobuNauvZAd14dt9LVyee";
 const usdt_address = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
@@ -218,69 +213,6 @@ function updateAPY(name){
 	}
 }
 
-// function updateYield() {
-// 	// need modification
-// 	var perblock = 100;
-// 	var annualblock = (365 * 86400) / 13; // approximation of 13 sec/block
-// 	var annualreward = annualblock * perblock;
-// 	var perpoolunit = annualreward / totalPoolWeight;
-
-// 	var ctx2 = new web3.eth.Contract(uniswapABI, pools[0][0]);
-// 	ctx2.methods.getReserves().call(function (err, result1) {
-// 		ctx2.methods.totalSupply().call(function (err, result2) {
-// 			ctx2.methods.balanceOf(chefAddress).call(function (err, result3) {
-// 				var totalSupply = result2; // total supply of UNI-V2
-// 				var stakedSupply = result3; // staked amount in chef
-// 				var percentageOfSupplyInPool = stakedSupply / totalSupply;
-// 				//console.log(result2,result3,percentageOfSupplyInPool,perpoolunit);
-// 				// total liquidity ~ 2*(single token liquidity)*(staked percentage), reserve0 = eth , reserve1 = usdt
-// 				pools[0][4] =
-// 					((perpoolunit /
-// 						((result1['_reserve1'] * 2) / Math.pow(10, 6))) *
-// 						100 *
-// 						pools[0][3]) /
-// 					percentageOfSupplyInPool;
-// 				pools[0][5] =
-// 					((result1['_reserve1'] * 2) / Math.pow(10, 6)) *
-// 					percentageOfSupplyInPool;
-// 				//console.log(result2,result3,percentageOfSupplyInPool,perpoolunit,result1['_reserve1']/Math.pow(10,18),pools[0][3]);
-// 				$('.pool0yield').animateNumbers(parseInt(pools[0][4]) + '%');
-// 				loadedPool();
-// 			});
-// 		});
-// 	});
-
-// 	//uniswap _revserve0 and 1 is amount*decimal of each token
-// 	var ctx0 = new web3.eth.Contract(uniswapABI, pools[5][0]);
-// 	ctx0.methods.getReserves().call(function (err, result1) {
-// 		ctx0.methods.totalSupply().call(function (err, result2) {
-// 			ctx0.methods.balanceOf(chefAddress).call(function (err, result3) {
-// 				//console.log('BURGER with ETH ctx1:',result1['_reserve0'],result1['_reserve1']);
-// 				var totalSupply = result2; // total supply of UNI-V2
-// 				var stakedSupply = result3; // staked amount in chef
-// 				var percentageOfSupplyInPool = stakedSupply / totalSupply;
-// 				//console.log(result2,result3,percentageOfSupplyInPool,perpoolunit);
-// 				// total liquidity ~ 2*(single token liquidity)*(staked percentage), reserve1 = burger, reseve0 = eth
-// 				pools[5][4] =
-// 					((perpoolunit /
-// 						((result1['_reserve1'] * 2) / Math.pow(10, 18))) *
-// 						100 *
-// 						pools[5][3]) /
-// 					percentageOfSupplyInPool;
-// 				pools[5][5] =
-// 					((prices['burgerusd'] * result1['_reserve1'] * 2) /
-// 						Math.pow(10, 18)) *
-// 					percentageOfSupplyInPool;
-// 				//console.log(result2,result3,percentageOfSupplyInPool,perpoolunit,result1['_reserve0']/Math.pow(10,18),pools[5][3]);
-// 				$('.pool5yield').animateNumbers(parseInt(pools[5][4]) + '%');
-// 				loadedPool();
-// 			});
-// 		});
-// 	});
-
-// }
-
-
 function updateConnectStatus() {
 	if (walletConnect) {
 		$('body').addClass('web3');
@@ -331,16 +263,18 @@ function nav(classname) {
 		$('main.' + classname).show();
 	}
 }
+var mm_tron = new $.mm_tron({
+	// OK
+	contract_address: "",
+	precision: 100000000000000000
+});
 
 function initpooldata(name) {
 	console.log("initpooldata:" + name);
 	async function triggercontract() {
 		$('.farmname').text(pools[name].name + ' pool');
 		currentPagePoolID = name;
-		//get yield balance
 
-		//get staked balance
-		//if larger than zero, approved
 		var allowance = 0;
 		if (name === "WWT/TRX") {
 			//这是lp token，需要单独处理

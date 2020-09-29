@@ -98,7 +98,26 @@
             overflow: auto;
 		}
 		
-	
+		.alert_content {
+			font-size: 22px;
+			color: black;
+			display: none;
+    		text-align: center;
+			position: absolute;
+			border-radius: 25px;
+			bottom: 20%;
+			left: 50%;
+			transform: translateX(-50%);
+			width:fit-content;
+            height: 50px;
+            padding: 10px;
+			padding-left: 30px;
+			padding-right: 30px;
+            background-color: rgba(239, 231, 234, 255);
+            z-index:1002;
+            overflow: auto;
+		}
+
 	body:not(.web3) .web3true {
 		display: none;
 	}
@@ -262,6 +281,9 @@
 <body class="text-center">
 	<div id="div1" hidden></div>
 	<div class="content">
+		<div class="alert_content" id="alertdiv">
+
+		</div>
 
         <div id="light" class="white_content">
 			<span style="color: black;text-align: center;font-size: 24px;" id="popTitle">Stake</span>　　　
@@ -350,7 +372,7 @@
 					<div class="card hide web3true swapcard2">
 						<div class="card-body">
 							<h6 class="card-subtitle mb-2 text-warning" data-lang="totalsupply">Total Supply</h6>
-							<H3 class="card-text mcap"><span>2100.00 </span> WWT</H3>
+							<H3 class="card-text mcap"><span>1200.00 </span> WWT</H3>
 						</div>
 					</div>
 				</div>

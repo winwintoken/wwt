@@ -207,7 +207,7 @@ function updateAPY(name) {
 		if (name === "WWT/TRX") {
 			apyp = ".poolyieldWWTTRX";
 		}
-		console.log("apy str="+apyStr);
+		// console.log("apy str="+apyStr);
 		$(apyp).animateNumbers(apyStr);
 	}
 	if (pools[name] && pools[name].poolAddress) {
@@ -260,6 +260,7 @@ var mm_tron = new $.mm_tron({
 });
 
 function initpooldata(name) {
+	// console.log("initpooldata:"+name);
 	async function triggercontract() {
 		$('.farmname').text(pools[name].name + ' pool');
 		currentPagePoolID = name;
@@ -313,11 +314,16 @@ function initpooldata(name) {
 function approve() {
 	async function trigger() {
 		await mm_tron.approve(pools[currentPagePoolID].address, pools[currentPagePoolID].poolAddress);
+		toastAlert("授权已经发起，刷新页面。");
 	}
 	trigger();
 }
 
 function stake() {
+	if(pools[currentPagePoolID].userBalance==0){
+		toastAlert("Token is not enough!");
+		return;
+	}
 	document.getElementById("popTitle").innerHTML = "Stake";
 	var userBalance = (pools[currentPagePoolID].userBalance / Math.pow(10, pools[currentPagePoolID].decimals)).toFixed(4);
 	$('#maxAvaliable').text(userBalance);
@@ -328,6 +334,10 @@ function stake() {
 }
 
 function withdraw() {
+	if(pools[currentPagePoolID].userStake==0){
+		toastAlert("No token can be withdrawn")
+		return
+	}
 	document.getElementById("popTitle").innerHTML = "Withdraw";
 	var max = (pools[currentPagePoolID].userStake / Math.pow(10, pools[currentPagePoolID].decimals)).toFixed(4);
 	$('#maxAvaliable').text(max);
@@ -352,12 +362,12 @@ function withdrawSure() {
 				}
 				if (eventResult) {
 					// console.log('eventResult:', eventResult);
-					alert("Withdraw success!");
+					toastAlert("Withdraw success!");		
 					initpooldata(currentPagePoolID);
 				}
 			});
 
-			contract.withdraw(window.tronWeb.toHex(stake * Math.pow(10, token.decimals)))
+			await contract.withdraw(window.tronWeb.toHex(stake * Math.pow(10, token.decimals)))
 				.send(
 					{
 						feeLimit: 100_000_000,
@@ -365,6 +375,7 @@ function withdrawSure() {
 						shouldPollResponse: true
 					}
 				);
+			toastAlert("交易请求已经发出，请等待结果返回...");			
 		}
 		trigger();
 	}
@@ -385,19 +396,22 @@ function stakeSure() {
 				}
 				if (eventResult) {
 					// console.log('eventResult:', eventResult);
-					alert("Stake success!");
+					toastAlert("Stake success!");	
 					initpooldata(currentPagePoolID);
 				}
 			});
-
-			contract.stake(window.tronWeb.toHex(stake * Math.pow(10, token.decimals)))
+		
+			await contract.stake(window.tronWeb.toHex(stake * Math.pow(10, token.decimals)))
 				.send(
 					{
 						feeLimit: 100_000_000,
 						callValue: 0,
 						shouldPollResponse: true
 					}
-				);
+				).then(function(){
+					console.log("stake result");
+				});
+			toastAlert("交易请求已经发出，请等待结果返回...");	
 		}
 		trigger();
 	}
@@ -422,6 +436,10 @@ function hideAlert() {
 
 function claimReward() {
 	var token = pools[currentPagePoolID];
+	if(token.userEarn==0){
+		toastAlert("No token can be claimed!")
+		return;
+	}
 	if (token && token.poolAddress) {
 		async function trigger() {
 			var contract = await window.tronWeb.contract().at(token.poolAddress);
@@ -447,26 +465,12 @@ function claimReward() {
 		}
 		trigger();
 	}
-
-}
-
-function updatePrice(p) {
-	$('.tokenprice').text('$' + p.toFixedSpecial(4));
-	updateYield();
-}
-
-function getlptoken(id) {
-	if (typeof id === 'undefined') {
-		window.open(pools[currentPagePoolID][2]);
-	} else {
-		window.open(pools[id][2]);
-	}
 }
 
 var timer = setInterval(() => {
 	// console.log("address start")
 	gettronweb();
-}, 1000);
+}, 300);
 
 function gettronweb() {
 	if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
@@ -479,11 +483,8 @@ function gettronweb() {
 		loadJustswapData();
 	} else {
 		console.log("address No")
-		wallet_address.textContent = "未连接钱包（需要安装TronLink钱包）";
 	}
 }
-
-
 
 function checkNode() {
 	var host = window.tronWeb.fullNode.host;
@@ -551,4 +552,13 @@ function uploadReword() {
 		await tronWeb.trx.sendRawTransaction(signedTx);
 	}
 	triggercontract();
+}
+
+function toastAlert(msg){
+	console.log("toastAlert:"+msg);
+	document.getElementById('alertdiv').style.display='block';
+	document.getElementById('alertdiv').innerHTML = msg;
+	setTimeout(function(){
+		document.getElementById('alertdiv').style.display='none';
+	},2000);
 }

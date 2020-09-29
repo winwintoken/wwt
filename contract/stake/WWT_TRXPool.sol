@@ -58,7 +58,7 @@ contract WWTRXPool is LPTokenWrapper, IRewardDistributionRecipient {
     ITRC20 public wwtToken = ITRC20(0x41c8e782045cf996e8af0708323c416fff1313b8a6);
     uint256 public DURATION = 1_209_600; // 14 days
 
-    uint256 public starttime = 1600268400; // 2020/9/16 23:0:0 (UTC UTC +08:00)
+    uint256 public starttime = 1601391600; // 2020/9/29 23:0:0 (HKT)
     uint256 public periodFinish = 0;
     uint256 public rewardRate = 0;
     uint256 public lastUpdateTime;

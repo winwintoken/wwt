@@ -288,17 +288,17 @@
 			<input name="name" type="number" style="width: 50%;" autofocus="autofocus" value="0" id="stakeInput">
 			<button onclick="maxStake()">MAX</button>
 			<div>
-				<a style="width: 60%;margin-top: 10%;margin-bottom: 10%;" onclick = "document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'" class="card-link btn btn-primary btn-lg">
+				<a data-lang="cancle" style="width: 60%;margin-top: 10%;margin-bottom: 10%;" onclick = "document.getElementById('light').style.display='none';document.getElementById('fade').style.display='none'" class="card-link btn btn-primary btn-lg">
 					Cancle
 				</a>
 			</div>
 			<div id="stakediv">
-				<a  style="width: 60%;margin-bottom: 10%;" onclick="stakeSure()" class="card-link btn btn-primary btn-lg">
+				<a data-lang="stake" style="width: 60%;margin-bottom: 10%;" onclick="stakeSure()" class="card-link btn btn-primary btn-lg">
 					Stake
 				</a>
 			</div>
 			<div id="withdrawdiv">
-				<a  style="width: 60%;margin-bottom: 10%;" onclick="withdrawSure()" class="card-link btn btn-primary btn-lg">
+				<a data-lang="withdraw" style="width: 60%;margin-bottom: 10%;" onclick="withdrawSure()" class="card-link btn btn-primary btn-lg">
 					Withdraw
 				</a>
 			</div>
@@ -310,10 +310,10 @@
 				<div class="inner">
 					<h3 class="masthead-brand" onclick="nav('home')">WinWin Token</h3>
 					<nav class="nav nav-masthead justify-content-center">
-						<a class="nav-link" href="#home" onclick="nav('home')">HOME</a>
-						<a class="nav-link" href="#farm" onclick="nav('farms')">FARM & TRADE</a>
-						<a class="nav-link" href="#about" onclick="nav('about')">ABOUT</a>
-						<a class="nav-link" href="#" onclick="changelang()" id="changelang">中</a>
+						<a class="nav-link" href="#home" onclick="nav('home')" data-lang="home">HOME</a>
+						<a class="nav-link" href="#farm" onclick="nav('farms')" data-lang="farm">FARM</a>
+						<a class="nav-link" href="#about" onclick="nav('about')" data-lang="about">ABOUT</a>
+						<a class="nav-link" href="#" onclick="changelang()" id="changelang">EN</a>
 					</nav>
 				</div>
 			</header>
@@ -336,14 +336,14 @@
 						<div class="card-body">
 							<h6 class="card-subtitle mb-2 text-warning" data-lang="yourbalance">YOUR BALANCE</h6>
 							<H3 class="card-text balance"><span>-.----</span> WWT</H3>
-							<a href="#farms" onclick="nav('farms')" class="card-link btn btn-primary btn-lg">FARM</a>
+							<a href="#farms" onclick="nav('farms')" class="card-link btn btn-primary btn-lg" data-lang="farm">FARM</a>
 						</div>
 					</div>
 					<div class="card hide web3true swapcard">
 						<div class="card-body">
 							<h6 class="card-subtitle mb-2 text-warning" data-lang="tokenprice">TOKEN PRICE</h6>
 							<H3 class="card-text tokenprice">-.----</H3>
-							<a href="#" class="card-link btn btn-primary btn-lg" onclick="getlptoken(5)">BUY</a>
+							<a href="#" class="card-link btn btn-primary btn-lg" onclick="getlptoken(5)" data-lang="buy">BUY</a>
 						</div>
 					</div>
 					<div class="card hide web3true swapcard2" hidden>
@@ -361,7 +361,7 @@
 					</div>
 					<div class="card hide web3true swapcard2">
 						<div class="card-body">
-							<h6 class="card-subtitle mb-2 text-warning">Total Supply</h6>
+							<h6 class="card-subtitle mb-2 text-warning" data-lang="totalsupply">Total Supply</h6>
 							<H3 class="card-text mcap"><span>2100.00 </span> WWT</H3>
 						</div>
 					</div>
@@ -369,24 +369,17 @@
 			</main>
 
 			<main role="main" class="inner cover about" STYLE="DISPLAY:NONE">
-				<!-- <img src="https://ih1.redbubble.net/image.707953223.5907/st,small,845x845-pad,1000x1000,f8f8f8.u2.jpg" /> -->
-				PEARL will be distributed in the sprit of YFI: no pre-mine, no founder shares, no VC interests - simply equal-opportunity staking distribution to attract a broad and vision-aligned community to steward the future of the protocol and token.
-				<br><br>
-				Pools
-USDt 5000
-USDj 2500
-JST 2500
-DZI 5000
-TRX 2500
-TAI 5000
-PEARL-LP 7500
-Adding more pools will subject to community vote.
-				<br><br>
-				We can go 'gether like a burger and some French fry,
-				<br><br>
-				What are ya waitin for? Yippie kee yay mofo!
-				<br><br>
-				<br><br>
+				WWT将以YFI的形式进行分发：非预前开采，无创始人股份，无风投利益-借凭均等的股权分配，以吸引广泛且视野一致的社区来管理协议和代币的未来.
+				WWT开采期为2周，不同的池子开采时间不同。
+				总量2100枚，创世挖矿持续2周，总共挖出1200枚。剩余900枚在社区投票下，会采取分红、空投、开启其他矿池的形式进行分发。
+				
+
+				<br>
+				关于团队：我们是以太坊上的开发团队，鉴于以太坊的手续费高昂且交易速度缓慢，我们的很多想法无法达到我们的期望，所以选择在波场上落地。
+				<br>
+				<br>
+				规划：WWT作为我们在波场上的初次落地项目，在挖矿到一周时，二期项目将落地，落实去中心化合约交易所 v0.1 版本，WWT将作为头矿进行挖矿，或者对WWT持有者进行空投。
+				<br>
 
 			</main>
 
@@ -401,7 +394,7 @@ Adding more pools will subject to community vote.
 							</div>
 							<h6 class="card-subtitle mb-2 text-warning">WWT/TRX LP</h6>
 							<H3 class="card-text apy0">APY <span class="poolyieldWWTTRX">---.-%</span></H3>
-							<a href="#poolWWT/TRX" onclick="nav('poolWWT/TRX')" class="card-link btn btn-primary btn-lg">
+							<a href="#poolWWT/TRX" onclick="nav('poolWWT/TRX')" class="card-link btn btn-primary btn-lg" data-lang="farm">
 								Farm
 							</a>
 
@@ -414,7 +407,7 @@ Adding more pools will subject to community vote.
 							<div class="token wwt"></div>
 							<h6 class="card-subtitle mb-2 text-warning">WWT</h6>
 							<H3 class="card-text apy0">APY <span class="poolyieldWWT">---.-%</span></H3>
-							<a href="#poolWWT" onclick="nav('poolWWT')" class="card-link btn btn-primary btn-lg">
+							<a href="#poolWWT" onclick="nav('poolWWT')" class="card-link btn btn-primary btn-lg" data-lang="farm">
 								Farm
 							</a>
 						</div>
@@ -426,7 +419,7 @@ Adding more pools will subject to community vote.
 							<div class="token usdt"></div>
 							<h6 class="card-subtitle mb-2 text-warning">USDT</h6>
 							<H3 class="card-text apy0">APY <span class="poolyieldUSDT">---.-%</span></H3>
-							<a href="#poolUSDT" onclick="nav('poolUSDT')" class="card-link btn btn-primary btn-lg">
+							<a href="#poolUSDT" onclick="nav('poolUSDT')" class="card-link btn btn-primary btn-lg" data-lang="farm">
 								Farm
 							</a>
 						</div>
@@ -439,7 +432,7 @@ Adding more pools will subject to community vote.
 							<div class="token pearl"></div>
 							<h6 class="card-subtitle mb-2 text-warning">PEARL</h6>
 							<H3 class="card-text apy0">APY <span class="poolyieldPEARL">---.-%</span></H3>
-							<a href="#poolPEARL" onclick="nav('poolPEARL')" class="card-link btn btn-primary btn-lg">
+							<a href="#poolPEARL" onclick="nav('poolPEARL')" class="card-link btn btn-primary btn-lg" data-lang="farm">
 								Farm
 							</a>
 						</div>
@@ -453,7 +446,7 @@ Adding more pools will subject to community vote.
 								<div class="token cola"></div>
 							<h6 class="card-subtitle mb-2 text-warning">COLA</h6>
 							<H3 class="card-text apy0">APY <span class="poolyieldCOLA">---.-%</span></H3>
-							<a href="#poolCOLA" onclick="nav('poolCOLA')" class="card-link btn btn-primary btn-lg">
+							<a href="#poolCOLA" onclick="nav('poolCOLA')" class="card-link btn btn-primary btn-lg" data-lang="farm">
 								Farm
 							</a>
 
@@ -467,7 +460,7 @@ Adding more pools will subject to community vote.
 							<div class="token ssk"></div>
 							<h6 class="card-subtitle mb-2 text-warning">SSK</h6>
 							<H3 class="card-text apy0">APY <span class="poolyieldSSK">---.-%</span></H3>
-							<a href="#poolSSK" onclick="nav('poolSSK')" class="card-link btn btn-primary btn-lg" >
+							<a href="#poolSSK" onclick="nav('poolSSK')" class="card-link btn btn-primary btn-lg"  data-lang="farm">
 								Farm
 							</a>
 						</div>
@@ -480,7 +473,7 @@ Adding more pools will subject to community vote.
 								<div class="token sun"></div>
 							<h6 class="card-subtitle mb-2 text-warning">SUN</h6>
 							<H3 class="card-text apy0">APY <span class="poolyieldSUN">---.-%</span></H3>
-							<a href="#poolSUN" onclick="nav('poolSUN')" class="card-link btn btn-primary btn-lg">
+							<a href="#poolSUN" onclick="nav('poolSUN')" class="card-link btn btn-primary btn-lg" data-lang="farm">
 								Farm
 							</a>
 
@@ -494,7 +487,7 @@ Adding more pools will subject to community vote.
 							<div class="token jfi"></div>
 							<h6 class="card-subtitle mb-2 text-warning">JFI</h6>
 							<H3 class="card-text apy0">APY <span class="poolyieldJFI">---.-%</span></H3>
-							<a href="#poolJFI" onclick="nav('poolJFI')" class="card-link btn btn-primary btn-lg" style="pointer-events: none;">
+							<a href="#poolJFI" onclick="nav('poolJFI')" class="card-link btn btn-primary btn-lg" style="pointer-events: none;" data-lang="farm">
 								Farm
 							</a>
 
@@ -509,7 +502,7 @@ Adding more pools will subject to community vote.
 							<div class="token ht"></div>
 							<h6 class="card-subtitle mb-2 text-warning">HT</h6>
 							<H3 class="card-text apy0">APY <span class="poolyieldHT">---.-%</span></H3>
-							<a href="#poolHT" onclick="nav('poolHT')" class="card-link btn btn-primary btn-lg" style="pointer-events: none;">
+							<a href="#poolHT" onclick="nav('poolHT')" class="card-link btn btn-primary btn-lg" style="pointer-events: none;" data-lang="farm">
 								Farm
 							</a>
 
@@ -523,7 +516,7 @@ Adding more pools will subject to community vote.
 							<div class="token dzi"></div>
 							<h6 class="card-subtitle mb-2 text-warning">DZI</h6>
 							<H3 class="card-text apy0">APY <span class="poolyieldDZI">---.-%</span></H3>
-							<a href="#poolDZI" onclick="nav('poolDZI')" class="card-link btn btn-primary btn-lg" style="pointer-events: none;">
+							<a href="#poolDZI" onclick="nav('poolDZI')" class="card-link btn btn-primary btn-lg" style="pointer-events: none;" data-lang="farm">
 								Farm
 							</a>
 
@@ -537,7 +530,7 @@ Adding more pools will subject to community vote.
 							<div class="token gold"></div>
 							<h6 class="card-subtitle mb-2 text-warning">GOLD</h6>
 							<H3 class="card-text apy0">APY <span class="poolyieldGOLD">---.-%</span></H3>
-							<a href="#poolGOLD" onclick="nav('poolGOLD')" class="card-link btn btn-primary btn-lg" style="pointer-events: none;">
+							<a href="#poolGOLD" onclick="nav('poolGOLD')" class="card-link btn btn-primary btn-lg" style="pointer-events: none;" data-lang="farm">
 								Farm
 							</a>
 
@@ -551,7 +544,7 @@ Adding more pools will subject to community vote.
 							<div class="token tai"></div>
 							<h6 class="card-subtitle mb-2 text-warning">TAI</h6>
 							<H3 class="card-text apy0">APY <span class="poolyieldTAI">---.-%</span></H3>
-							<a href="#poolTAI" onclick="nav('poolTAI')" class="card-link btn btn-primary btn-lg" style="pointer-events: none;">
+							<a href="#poolTAI" onclick="nav('poolTAI')" class="card-link btn btn-primary btn-lg" style="pointer-events: none;" data-lang="farm">
 								Farm
 							</a>
 
@@ -567,29 +560,29 @@ Adding more pools will subject to community vote.
 				<div class="row">
 					<div class="card hide web3true col-md-12 col-12">
 						<div class="card-body">
-							<h6 class="card-subtitle mb-2 text-warning">WWT CLAIM</h6>
+							<h6 class="card-subtitle mb-2 text-warning" data-lang="wwtclaim">WWT CLAIM</h6>
 							<H3 class="card-text rewardbalance">-.----</H3>
-							<a href="#" class="card-link btn btn-primary btn-lg" onclick="claimReward()">CLAIM</a>
+							<a href="#" class="card-link btn btn-primary btn-lg" onclick="claimReward()" data-lang="claim">CLAIM</a>
 						</div>
 					</div>
 					<div class="card hide web3true  col-md-6 col-12">
 						<div class="card-body">
-							<h6 class="card-subtitle mb-2 text-warning">Total Staked</h6>
+							<h6 class="card-subtitle mb-2 text-warning" data-lang="totalstake">Total Staked</h6>
 							<H3 class="card-text totalstake">-.----</H3>
 							<div class="not-approved-spend">
-								<a href="#" class="card-link btn btn-primary btn-lg" onclick="approve()">APPROVE</a>
+								<a href="#" class="card-link btn btn-primary btn-lg" onclick="approve()" data-lang="approve">APPROVE</a>
 							</div>
 							<div class="approved-spend">
-								<a href="#" class="card-link btn btn-primary btn-lg" onclick="stake()">STAKE</a>
+								<a href="#" class="card-link btn btn-primary btn-lg" onclick="stake()" data-lang="stake">STAKE</a>
 							</div>
 
 						</div>
 					</div>
 					<div class="card hide web3true col-md-6 col-12">
 						<div class="card-body">
-							<h6 class="card-subtitle mb-2 text-warning">Your Staked</h6>
+							<h6 class="card-subtitle mb-2 text-warning" data-lang="yourstake">Your Staked</h6>
 							<H3 class="card-text stakedbalance">-.----</H3>
-							<a href="#" class="card-link btn btn-primary btn-lg" onclick="withdraw()">WITHDRAW</a>
+							<a href="#" class="card-link btn btn-primary btn-lg" onclick="withdraw()" data-lang="withdraw">WITHDRAW</a>
 						</div>
 					</div>
 				</div>
@@ -600,9 +593,9 @@ Adding more pools will subject to community vote.
 	<footer class="mastfoot footer">
 		<div class="inner">
 			<p><a href="https://tronscan.org"
-					target="_blank">Token Contract</a>
+					target="_blank" data-lang="tokencontract">Token Contract</a>
 				&mdash; <a href="https://tronscan.org"
-					target="_blank">Pool Contract</a>
+					target="_blank" data-lang="poolcontract">Pool Contract</a>
 				<br /><br /> <a href="https://twitter.com/money_burger" target="_blank">Twitter</a>
 				&mdash;
 				<a href="https://discord.gg/7tJmY7" target="_blank">Discord</a>
@@ -769,10 +762,10 @@ function changelang(){
         var new_lang;
         if(language_pack.now_lang == 0){
 			new_lang = 1;
-			$("#changelang").text("EN");
+			$("#changelang").text("中");
         }else{
 			new_lang = 0;
-			$("#changelang").text("中");
+			$("#changelang").text("EN");
         }
         language_pack.loadProperties(new_lang);
     }
